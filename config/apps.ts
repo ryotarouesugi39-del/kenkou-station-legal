@@ -31,6 +31,10 @@ export type AppInfo = {
   privacyEnactedDate: string;
   /** プライバシーポリシーの最終更新日 */
   privacyLastUpdated: string;
+  /** 利用規約の制定日 */
+  termsEnactedDate: string;
+  /** 利用規約の最終更新日 */
+  termsLastUpdated: string;
 };
 
 export const apps: AppInfo[] = [
@@ -40,6 +44,8 @@ export const apps: AppInfo[] = [
     description: "高齢者向け見守り健康管理アプリ",
     privacyEnactedDate: "2026年9月21日",
     privacyLastUpdated: "2026年9月23日",
+    termsEnactedDate: "2026年9月23日",
+    termsLastUpdated: "2026年9月23日",
   },
   // 新しいアプリはここに追加していく
   // {
@@ -48,6 +54,8 @@ export const apps: AppInfo[] = [
   //   description: "アプリの説明",
   //   privacyEnactedDate: "2027年X月X日",
   //   privacyLastUpdated: "2027年X月X日",
+  //   termsEnactedDate: "2027年X月X日",
+  //   termsLastUpdated: "2027年X月X日",
   // },
 ];
 

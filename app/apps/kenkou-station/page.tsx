@@ -22,6 +22,12 @@ export default function KenkouStationPage() {
 
       <nav className="space-y-3">
         <Link
+          href={`/apps/${app.slug}/terms`}
+          className="block text-blue-600 hover:underline"
+        >
+          利用規約 →
+        </Link>
+        <Link
           href={`/apps/${app.slug}/privacy`}
           className="block text-blue-600 hover:underline"
         >

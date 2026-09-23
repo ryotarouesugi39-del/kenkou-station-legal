@@ -22,6 +22,9 @@ export const siteConfig = {
   /** 運営会社・運営者名（個人の場合は「◯◯（個人事業主）」などでも可） */
   operatorName: "株式会社トイマン",
 
+  /** 代表者（特定商取引法に基づく表記に掲載） */
+  representative: "代表取締役　上杉昌隆",
+
   /** 問い合わせ先メールアドレス（全アプリ共通） */
   contactEmail: "info@toiman.co.jp",
 

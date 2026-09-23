@@ -18,6 +18,7 @@
 | `/apps/kenkou-station` | 健康ステーションの概要（プライバシー/サポートへの入口） |
 | `/apps/kenkou-station/privacy` | 健康ステーションのプライバシーポリシー |
 | `/apps/kenkou-station/support` | 健康ステーションのサポート・お問い合わせ |
+| `/tokushoho` | 特定商取引法に基づく表記（全アプリ共通。全ページのフッターからリンク） |
 
 新しいアプリを追加すると、トップのヘッダー右側にリンクが1つ増え、
 `/apps/<slug>` 以下に概要・privacy・supportの3ページが増える構成です

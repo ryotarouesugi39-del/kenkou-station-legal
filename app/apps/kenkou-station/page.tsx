@@ -33,6 +33,9 @@ export default function KenkouStationPage() {
         >
           サポート →
         </Link>
+        <Link href="/tokushoho" className="block text-blue-600 hover:underline">
+          特定商取引法に基づく表記 →
+        </Link>
       </nav>
     </main>
   );

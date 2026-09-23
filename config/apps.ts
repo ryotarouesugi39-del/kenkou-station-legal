@@ -43,7 +43,7 @@ export const apps: AppInfo[] = [
     name: "健康ステーション",
     description: "高齢者向け見守り健康管理アプリ",
     privacyEnactedDate: "2026年9月21日",
-    privacyLastUpdated: "2026年9月21日",
+    privacyLastUpdated: "2026年9月23日",
     termsEnactedDate: "2026年9月23日",
     termsLastUpdated: "2026年9月23日",
   },

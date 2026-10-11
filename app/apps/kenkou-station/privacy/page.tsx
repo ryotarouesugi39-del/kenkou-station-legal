@@ -150,20 +150,29 @@ export default function PrivacyPolicyPage() {
             前条の外部サービスのうち、Groq, Inc.、Google（Firebase、AdMob）、RevenueCatは、米国の事業者であり、個人データを米国のサーバーで取り扱う場合があります。
           </li>
           <li>
-            米国の個人情報の保護に関する制度の概要は、個人情報保護委員会が公表している資料をご参照ください。【入力：個人情報保護委員会の「外国における個人情報の保護に関する制度等の調査」のURLを入れる】
+            米国の個人情報の保護に関する制度の概要は、個人情報保護委員会の「外国における個人情報の保護に関する制度等の調査」（
+            <a
+              href="https://www.ppc.go.jp/personalinfo/legal/kaiseihogohou/#gaikoku"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline"
+            >
+              https://www.ppc.go.jp/personalinfo/legal/kaiseihogohou/#gaikoku
+            </a>
+            ）をご参照ください。
           </li>
           <li>
             当社は、これらの事業者に、本サービスの提供に必要な範囲に限って、情報を取り扱わせています。Groq, Inc.については、入力と出力を保存しない設定を有効にしています。
           </li>
           <li>
-            Open-Meteoに送信するのは、緯度・経度のみで、ユーザーを特定する情報は含みません。【入力：Open-Meteoの所在国を確認して、必要なら書く】
+            Open-Meteoは、スイスの事業者が運営しています。送信するのは緯度・経度のみで、ユーザーを特定する情報は含みません。
           </li>
         </ol>
       </Section>
 
       <Section title="第7条（広告識別子について）">
         <p>
-          無料でご利用いただく場合、広告配信のために広告識別子（IDFA／AAID等）が利用されることがあります。有料プランのご契約中は広告が表示されないため、広告識別子は利用されません。広告識別子の利用は、端末の設定から制限することができます。【入力：iOSで、トラッキングの許可（ATT）の確認を出している場合は、その旨を一文足す】
+          無料でご利用いただく場合、広告配信のために広告識別子（IDFA／AAID等）が利用されることがあります。有料プランのご契約中は広告が表示されないため、広告識別子は利用されません。Androidでは広告識別子を利用することがあります。iOSでは、端末で許可された場合にのみ利用します。広告識別子の利用は、端末の設定から制限することができます。
         </p>
       </Section>
 

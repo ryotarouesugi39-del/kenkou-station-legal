@@ -45,7 +45,7 @@ export const apps: AppInfo[] = [
     privacyEnactedDate: "2026年9月21日",
     privacyLastUpdated: "2026年10月12日",
     termsEnactedDate: "2026年9月23日",
-    termsLastUpdated: "2026年9月23日",
+    termsLastUpdated: "2026年10月12日",
   },
   // 新しいアプリはここに追加していく
   // {

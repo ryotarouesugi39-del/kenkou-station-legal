@@ -6,7 +6,12 @@ export const metadata: Metadata = {
   title: "特定商取引法に基づく表記",
 };
 
-const DISCLOSE_ON_REQUEST = "ご請求があれば遅滞なく開示いたします";
+const DISCLOSE_ON_REQUEST = (
+  <>
+    ご請求があれば遅滞なく開示いたします（{siteConfig.contactEmail}
+    　までご連絡ください）
+  </>
+);
 
 export default function TokushohoPage() {
   const rows: { label: string; value: React.ReactNode }[] = [
@@ -27,7 +32,13 @@ export default function TokushohoPage() {
     },
     {
       label: "販売価格",
-      value: "各プランの価格はアプリ内の購入画面に表示された金額によります",
+      value: (
+        <>
+          プレミアムプラン：月額700円（税込）
+          <br />
+          ※実際の価格は、アプリ内の購入画面に表示された金額によります
+        </>
+      ),
     },
     {
       label: "商品代金以外の必要料金",
@@ -39,8 +50,7 @@ export default function TokushohoPage() {
     },
     {
       label: "お支払い時期",
-      value:
-        "ご購入手続き完了時（以降は各プランの周期に応じて自動更新）",
+      value: "ご購入手続き完了時（以降は、1か月ごとに自動更新）",
     },
     {
       label: "サービス提供時期",
@@ -51,14 +61,15 @@ export default function TokushohoPage() {
       value: (
         <>
           デジタルサービスの性質上、購入後のご返金は原則お受けできません。
-          定期購入の解約は、次回更新日の前までにApp Store／Google Playの設定からお手続きください
+          定期購入の解約は、次回更新日の前までに、App Store／Google
+          Playの設定からお手続きください。アプリやアカウントを削除しても、解約にはなりません。
         </>
       ),
     },
     {
       label: "動作環境",
       value:
-        "iOS／Androidの対応バージョンはアプリストアの掲載ページをご確認ください",
+        "iOS／Androidの対応バージョンは、アプリストアの掲載ページをご確認ください",
     },
   ];
 

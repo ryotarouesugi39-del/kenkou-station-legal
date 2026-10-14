@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
+import { getApp } from "@/config/apps";
 
 export const metadata: Metadata = {
   title: "特定商取引法に基づく表記",
@@ -14,6 +15,7 @@ const DISCLOSE_ON_REQUEST = (
 );
 
 export default function TokushohoPage() {
+  const app = getApp("kenkou-station");
   const rows: { label: string; value: React.ReactNode }[] = [
     { label: "販売業者", value: siteConfig.operatorName },
     { label: "代表者", value: siteConfig.representative },
@@ -34,7 +36,7 @@ export default function TokushohoPage() {
       label: "販売価格",
       value: (
         <>
-          プレミアムプラン：月額700円（税込）
+          プレミアムプラン：月額600円（税込）
           <br />
           ※実際の価格は、アプリ内の購入画面に表示された金額によります
         </>
@@ -81,7 +83,12 @@ export default function TokushohoPage() {
         </Link>
       </p>
 
-      <h1 className="mb-10 text-2xl font-bold">特定商取引法に基づく表記</h1>
+      <h1 className="mb-2 text-2xl font-bold">特定商取引法に基づく表記</h1>
+      {app && (
+        <p className="mb-10 text-sm text-slate-500">
+          最終更新日：{app.tokushohoLastUpdated}
+        </p>
+      )}
 
       <dl className="divide-y divide-slate-200 border-y border-slate-200">
         {rows.map((row) => (

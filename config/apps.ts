@@ -35,6 +35,8 @@ export type AppInfo = {
   termsEnactedDate: string;
   /** 利用規約の最終更新日 */
   termsLastUpdated: string;
+  /** 特定商取引法に基づく表記の最終更新日 */
+  tokushohoLastUpdated: string;
 };
 
 export const apps: AppInfo[] = [
@@ -46,6 +48,7 @@ export const apps: AppInfo[] = [
     privacyLastUpdated: "2026年10月12日",
     termsEnactedDate: "2026年9月23日",
     termsLastUpdated: "2026年10月12日",
+    tokushohoLastUpdated: "2026年10月15日",
   },
   // 新しいアプリはここに追加していく
   // {
@@ -56,6 +59,7 @@ export const apps: AppInfo[] = [
   //   privacyLastUpdated: "2027年X月X日",
   //   termsEnactedDate: "2027年X月X日",
   //   termsLastUpdated: "2027年X月X日",
+  //   tokushohoLastUpdated: "2027年X月X日",
   // },
 ];
 

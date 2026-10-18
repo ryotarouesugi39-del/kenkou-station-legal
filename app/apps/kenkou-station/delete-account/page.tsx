@@ -52,7 +52,7 @@ export default function DeleteAccountPage() {
           </li>
         </ol>
         <p className="mt-3">
-          削除は即時に行われ、完了後は元に戻すことはできません。
+          削除操作は即時に実行され、完了後は元に戻すことはできません。
         </p>
       </Section>
 
@@ -95,7 +95,7 @@ export default function DeleteAccountPage() {
 
       <Section title="削除されるデータ・残るデータ・期間">
         <p className="mb-4">
-          上記いずれの方法でも、削除される内容・保持される内容は同じです。削除は即時に行われ、当社のデータベース（Firestore）には自動バックアップの設定をしていないため、下表の削除対象データがバックアップの形で残ることはありません。
+          上記いずれの方法でも、削除される内容・保持される内容は同じです。アカウントに紐づく主なデータは、削除操作の完了後に削除されます。
         </p>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-sm">
@@ -110,9 +110,9 @@ export default function DeleteAccountPage() {
               <tr className="border-b border-slate-200 align-top">
                 <td className="py-3 pr-4 font-medium">削除されるデータ</td>
                 <td className="py-3 pr-4">
-                  健康記録（血圧・体重・食事記録等）、プロフィール情報、歩数データ、AIチャットの履歴、週間・月間レポート、見守り（家族連携）に関する情報、食事の写真、アプリの利用に伴う端末上のキャッシュ、アカウント情報（ログイン情報）
+                  健康記録（血圧・体重・食事記録等）、プロフィール情報、歩数データ、AIチャットの履歴、月間レポート、見守り（家族連携）に関する情報、食事の写真、アプリの利用に伴う端末上のキャッシュ、アカウント情報（ログイン情報）
                 </td>
-                <td className="py-3">削除操作の完了後、即時に削除</td>
+                <td className="py-3">削除操作の完了後、速やかに削除</td>
               </tr>
               <tr className="border-b border-slate-200 align-top">
                 <td className="py-3 pr-4 font-medium">
@@ -127,14 +127,14 @@ export default function DeleteAccountPage() {
               </tr>
               <tr className="border-b border-slate-200 align-top">
                 <td className="py-3 pr-4 font-medium">
-                  システムのログに一時的に残ることがあるデータ
+                  システムの運用ログに一定期間残るデータ
                 </td>
                 <td className="py-3 pr-4">
-                  通知の送信処理等で記録される、アカウントの識別情報（ID）と通知内容を含むシステム運用ログ
+                  通知の送信処理等に伴い、運用上の記録として一時的に残る、アカウントの識別情報（ID）や通知内容
                 </td>
                 <td className="py-3">
-                  削除後、最長30日程度で自動的に消去されます（システム基盤（Google
-                  Cloud）の既定の保持期間によるものです）
+                  システム基盤（Google
+                  Cloud）の既定の保持期間（最長30日程度）に従い、その後消去されます
                 </td>
               </tr>
               <tr className="align-top">
@@ -155,6 +155,10 @@ export default function DeleteAccountPage() {
             </tbody>
           </table>
         </div>
+        <p className="mt-4 text-sm text-slate-500">
+          ※
+          週間レポートおよびカスタム項目（プレミアムプランで追加できる記録項目の設定）は、現在のバージョンでは削除対象に含まれていません。アプリの次回更新（バージョン1.0.1）で削除対象に追加される予定です。
+        </p>
       </Section>
 
       <Section title="お問い合わせ">

@@ -45,7 +45,7 @@ export default function DeleteAccountPage() {
             「アカウント」セクションにある「アカウントを削除する」を押す
           </li>
           <li>
-            表示される確認ダイアログの案内に従い、ご自身の表示名（ユーザー名）を入力して削除を確定する
+            表示される確認ダイアログで「削除する」を押す。表示名（ユーザー名）の入力を求められた場合は、誤操作防止のため入力してから確定する（表示名を設定していないアカウントでは、この入力は表示されません）
           </li>
           <li>
             ログイン方法によっては、本人確認のため再ログイン（Google／Apple再認証、SMS確認コード、またはメール内リンクの確認）を求められることがあります。案内に従って操作してください
@@ -95,7 +95,7 @@ export default function DeleteAccountPage() {
 
       <Section title="削除されるデータ・残るデータ・期間">
         <p className="mb-4">
-          上記いずれの方法でも、削除される内容・保持される内容は同じです。削除は即時に行われ、下表の削除対象データについてバックアップ等の形で保持されることもありません。
+          上記いずれの方法でも、削除される内容・保持される内容は同じです。削除は即時に行われ、当社のデータベース（Firestore）には自動バックアップの設定をしていないため、下表の削除対象データがバックアップの形で残ることはありません。
         </p>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-sm">
@@ -110,9 +110,32 @@ export default function DeleteAccountPage() {
               <tr className="border-b border-slate-200 align-top">
                 <td className="py-3 pr-4 font-medium">削除されるデータ</td>
                 <td className="py-3 pr-4">
-                  健康記録（血圧・体重・食事記録等）、プロフィール情報、歩数データ、AIチャットの履歴、見守り（家族連携）に関する情報、食事・測定機器の写真、アプリの利用に伴う端末上のキャッシュ、アカウント情報（ログイン情報）
+                  健康記録（血圧・体重・食事記録等）、プロフィール情報、歩数データ、AIチャットの履歴、週間・月間レポート、見守り（家族連携）に関する情報、食事の写真、アプリの利用に伴う端末上のキャッシュ、アカウント情報（ログイン情報）
                 </td>
                 <td className="py-3">削除操作の完了後、即時に削除</td>
+              </tr>
+              <tr className="border-b border-slate-200 align-top">
+                <td className="py-3 pr-4 font-medium">
+                  当社では保存していないデータ
+                </td>
+                <td className="py-3 pr-4">
+                  血圧計・体重計等の測定機器の表示を撮影した写真（数値の読み取りのためAIサービスに送信するのみで、当社サーバーには保存しません）
+                </td>
+                <td className="py-3">
+                  もともと保存していないため、削除対象自体がありません
+                </td>
+              </tr>
+              <tr className="border-b border-slate-200 align-top">
+                <td className="py-3 pr-4 font-medium">
+                  システムのログに一時的に残ることがあるデータ
+                </td>
+                <td className="py-3 pr-4">
+                  通知の送信処理等で記録される、アカウントの識別情報（ID）と通知内容を含むシステム運用ログ
+                </td>
+                <td className="py-3">
+                  削除後、最長30日程度で自動的に消去されます（システム基盤（Google
+                  Cloud）の既定の保持期間によるものです）
+                </td>
               </tr>
               <tr className="align-top">
                 <td className="py-3 pr-4 font-medium">

@@ -51,7 +51,7 @@ export default function SupportPage() {
         </dl>
       </section>
 
-      <section className="leading-relaxed text-slate-600">
+      <section className="mb-10 leading-relaxed text-slate-600">
         <h2 className="mb-3 text-lg font-semibold text-slate-800">
           よくあるお問い合わせ
         </h2>
@@ -59,6 +59,22 @@ export default function SupportPage() {
           お問い合わせの際は、ご利用の端末（iOS / Android）とOSバージョン、
           発生している症状を可能な範囲でご記載いただけますと、対応がスムーズ
           です。
+        </p>
+      </section>
+
+      <section className="leading-relaxed text-slate-600">
+        <h2 className="mb-3 text-lg font-semibold text-slate-800">
+          アカウントの削除をご希望の場合
+        </h2>
+        <p>
+          アカウントとデータの削除方法については、
+          <Link
+            href={`/apps/${app.slug}/delete-account`}
+            className="text-blue-600 hover:underline"
+          >
+            アカウント削除について
+          </Link>
+          のページをご確認ください。
         </p>
       </section>
     </main>

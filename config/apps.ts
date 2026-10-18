@@ -37,6 +37,10 @@ export type AppInfo = {
   termsLastUpdated: string;
   /** 特定商取引法に基づく表記の最終更新日 */
   tokushohoLastUpdated: string;
+  /** アカウント削除ページの制定日 */
+  deleteAccountEnactedDate: string;
+  /** アカウント削除ページの最終更新日 */
+  deleteAccountLastUpdated: string;
 };
 
 export const apps: AppInfo[] = [
@@ -45,10 +49,12 @@ export const apps: AppInfo[] = [
     name: "健康ステーション",
     description: "高齢者向け見守り健康管理アプリ",
     privacyEnactedDate: "2026年9月21日",
-    privacyLastUpdated: "2026年10月12日",
+    privacyLastUpdated: "2026年10月18日",
     termsEnactedDate: "2026年9月23日",
     termsLastUpdated: "2026年10月12日",
     tokushohoLastUpdated: "2026年10月15日",
+    deleteAccountEnactedDate: "2026年10月18日",
+    deleteAccountLastUpdated: "2026年10月18日",
   },
   // 新しいアプリはここに追加していく
   // {
@@ -60,6 +66,8 @@ export const apps: AppInfo[] = [
   //   termsEnactedDate: "2027年X月X日",
   //   termsLastUpdated: "2027年X月X日",
   //   tokushohoLastUpdated: "2027年X月X日",
+  //   deleteAccountEnactedDate: "2027年X月X日",
+  //   deleteAccountLastUpdated: "2027年X月X日",
   // },
 ];
 

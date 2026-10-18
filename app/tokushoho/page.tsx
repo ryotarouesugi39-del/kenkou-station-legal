@@ -14,6 +14,19 @@ const DISCLOSE_ON_REQUEST = (
   </>
 );
 
+// Android版では、現在プレミアムプランを購入できない旨の注意。
+// 「お支払い方法」「返品・キャンセルについて」の両方に、目立つ枠で出す。
+// 購入できるようになった際は、この定数とconfig/apps.tsの最終更新日を更新して
+// 注意枠を外す。
+const ANDROID_PURCHASE_NOTICE = (
+  <p
+    role="note"
+    className="mt-3 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-900"
+  >
+    Android版（Google Play）では、現在、プレミアムプランをご購入いただけません。購入できるようになった際は、本ページを更新します。
+  </p>
+);
+
 export default function TokushohoPage() {
   const app = getApp("kenkou-station");
   const rows: { label: string; value: React.ReactNode }[] = [
@@ -48,7 +61,12 @@ export default function TokushohoPage() {
     },
     {
       label: "お支払い方法",
-      value: "App Store／Google Playを通じたアプリ内課金",
+      value: (
+        <>
+          App Store／Google Playを通じたアプリ内課金
+          {ANDROID_PURCHASE_NOTICE}
+        </>
+      ),
     },
     {
       label: "お支払い時期",
@@ -65,6 +83,7 @@ export default function TokushohoPage() {
           デジタルサービスの性質上、購入後のご返金は原則お受けできません。
           定期購入の解約は、次回更新日の前までに、App Store／Google
           Playの設定からお手続きください。アプリやアカウントを削除しても、解約にはなりません。
+          {ANDROID_PURCHASE_NOTICE}
         </>
       ),
     },

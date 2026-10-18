@@ -137,6 +137,9 @@ export default function TermsPage() {return (
             </Link>
             のとおりとします。料金はApp Store／Google Playの決済システムを通じて請求され、解約手続きを行わない限り自動で更新されます。
           </li>
+          <li>
+            Android版（Google Play）では、現在、プレミアムプランをご購入いただけません。購入できるようになった際は、本規約および特定商取引法に基づく表記を更新します。
+          </li>
         </ol>
       </Section>
 

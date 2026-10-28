@@ -41,6 +41,8 @@ export type AppInfo = {
   deleteAccountEnactedDate: string;
   /** アカウント削除ページの最終更新日 */
   deleteAccountLastUpdated: string;
+  /** Google Playの掲載ページURL（未公開なら省略） */
+  googlePlayUrl?: string;
 };
 
 export const apps: AppInfo[] = [
@@ -55,6 +57,8 @@ export const apps: AppInfo[] = [
     tokushohoLastUpdated: "2026年10月19日",
     deleteAccountEnactedDate: "2026年10月18日",
     deleteAccountLastUpdated: "2026年10月18日",
+    googlePlayUrl:
+      "https://play.google.com/store/apps/details?id=com.kenkoustation.app",
   },
   // 新しいアプリはここに追加していく
   // {

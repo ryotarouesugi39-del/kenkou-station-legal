@@ -20,6 +20,20 @@ export default function KenkouStationPage() {
       <h1 className="mb-2 text-2xl font-bold">{app.name}</h1>
       <p className="mb-12 text-slate-500">{app.description}</p>
 
+      {app.googlePlayUrl && (
+        <section className="mb-12">
+          <h2 className="mb-3 text-lg font-semibold">ダウンロード</h2>
+          <a
+            href={app.googlePlayUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-blue-600 hover:underline"
+          >
+            Google Play（Android版） →
+          </a>
+        </section>
+      )}
+
       <nav className="space-y-3">
         <Link
           href={`/apps/${app.slug}/terms`}

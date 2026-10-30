@@ -128,11 +128,11 @@ body:has(.th) {
   .th .card-icon {
     flex-shrink: 0; width: 72px; height: 72px; border-radius: 20px;
     background: var(--accent-soft); color: var(--accent);
-    display: grid; place-items: center; transition: background .3s, color .3s;
+    display: grid; place-items: center; transition: transform .3s;
   }
-  .th .card:hover .card-icon { background: var(--accent); color: var(--surface); }
-  .th .card-icon svg { animation: beat 2.8s ease-in-out infinite; }
-  @keyframes beat { 0%,60%,100% { transform: scale(1); } 15% { transform: scale(1.12); } 30% { transform: scale(1); } 45% { transform: scale(1.06); } }
+  .th .card:hover .card-icon { transform: scale(1.05); }
+  .th .card-icon, .th .dl-icon { overflow: hidden; }
+  .th .card-icon img, .th .dl-icon img { width: 100%; height: 100%; object-fit: cover; }
   .th .card-body { flex: 1; min-width: 0; }
   .th .card-title { display: block; font-weight: 700; font-size: 1.45rem; line-height: 1.5; }
   .th .card-desc { display: block; color: var(--muted); font-size: 1rem; margin-top: 4px; }
@@ -273,12 +273,15 @@ body:has(.th) {
     .th .card { gap: 16px; padding: 8px; margin: -8px; }
     .th .card-icon { width: 58px; height: 58px; border-radius: 16px; }
     .th .card-title { font-size: 1.2rem; }
-    .th .stores .btn { flex-basis: 100%; }
+    .th .stores .btn { flex-basis: 100%; padding-left: 14px; padding-right: 14px; letter-spacing: .02em; }
     body:has(.th) > footer { flex-direction: column; align-items: flex-start; padding-left: 20px; padding-right: 20px; }
     .th .dl-text span { display: none; }
     .th .dl-bar { gap: 10px; padding: 10px 8px 10px 12px; }
     .th .dl-bar .btn { padding: 8px 14px; }
     .th .dl-icon { display: none; }
+  }
+  @media (max-width: 360px) {
+    .th .stores .btn { font-size: .86rem; gap: 6px; padding-left: 10px; padding-right: 10px; letter-spacing: 0; }
   }
   @media (prefers-reduced-motion: reduce) {
     html:has(.th) { scroll-behavior: auto; }

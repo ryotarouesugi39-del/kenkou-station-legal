@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
 import { apps } from "@/config/apps";
@@ -21,20 +22,8 @@ const STORE_NAMES: Record<Store, string> = {
   android: "Google Play",
 };
 
-const HeartIcon = ({ size }: { size: number }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2z" />
-  </svg>
-);
+// アプリアイコン（public/ 配下）
+const APP_ICON = "/kenkou-station-icon.png";
 
 const DownloadIcon = ({ size }: { size: number }) => (
   <svg
@@ -219,7 +208,7 @@ export default function Home() {
             <div className="app-panel reveal">
               <Link className="card" href={`/apps/${app.slug}`}>
                 <span className="card-icon" aria-hidden="true">
-                  <HeartIcon size={32} />
+                  <Image src={APP_ICON} alt="" width={72} height={72} />
                 </span>
                 <span className="card-body">
                   <span className="card-title">{app.name}</span>
@@ -244,7 +233,7 @@ export default function Home() {
                 <StoreLink store="ios" label="App Storeでダウンロード" className="btn btn-primary">
                   <DownloadIcon size={20} />
                 </StoreLink>
-                <StoreLink store="android" label="Google Playで手に入れる" className="btn btn-ghost">
+                <StoreLink store="android" label="Google Playでダウンロード" className="btn btn-ghost">
                   <DownloadIcon size={20} />
                 </StoreLink>
               </div>
@@ -285,7 +274,7 @@ export default function Home() {
         aria-label="アプリのダウンロード"
       >
         <span className="dl-icon" aria-hidden="true">
-          <HeartIcon size={22} />
+          <Image src={APP_ICON} alt="" width={44} height={44} />
         </span>
         <span className="dl-text">
           <b>{app.name}</b>

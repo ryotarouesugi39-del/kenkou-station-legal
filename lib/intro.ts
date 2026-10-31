@@ -88,8 +88,11 @@ function kata(s: string) {
   return s.replace(/[ぁ-ゖ]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) + 96));
 }
 
-/** [確定後の文字, 打つローマ字, 確定後に改行するか]。1つの区切りの中では折り返さない */
-export type ImeSegment = [string, string, boolean?];
+/**
+ * [確定後の文字, 打つローマ字, 確定後に改行するか, 折り返してよい位置で分けた文字]。
+ * 4つ目が無ければ区切り全体を、あればその塊ごとを折り返さない（単語の途中で改行しない）
+ */
+export type ImeSegment = [string, string, boolean?, string[]?];
 
 /** 日本語入力風タイピング（ローマ字で打つ → かなになる → 変換キーで漢字/カタカナに → 確定） */
 export function imeType(el: HTMLElement, segs: ImeSegment[], timers: Timers, done?: () => void) {
@@ -107,10 +110,12 @@ export function imeType(el: HTMLElement, segs: ImeSegment[], timers: Timers, don
     target.textContent = "";
     if (leadingBreak) target.appendChild(document.createElement("br"));
     list.forEach((s) => {
-      const span = document.createElement("span");
-      span.className = "seg";
-      span.textContent = s[0];
-      target.appendChild(span);
+      (s[3] ?? [s[0]]).forEach((text) => {
+        const span = document.createElement("span");
+        span.className = "seg";
+        span.textContent = text;
+        target.appendChild(span);
+      });
       if (s[2]) target.appendChild(document.createElement("br"));
     });
   };

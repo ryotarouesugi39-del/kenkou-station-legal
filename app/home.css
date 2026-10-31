@@ -272,7 +272,7 @@
     .th .band { top: 50%; height: 60%; width: 90%; right: -35%; opacity: .9; }
     .th .scroll-hint { display: none; }
     .th.is-ready .band { opacity: .9; }
-    .th .hero-copy { max-width: none; font-size: clamp(1.7rem, 8vw, 2.3rem); line-height: 1.55; }
+    .th .hero-copy { max-width: none; /* 3行目「開発・運営しています。」(11文字)が1行に収まる大きさまで */ font-size: min(2.3rem, 8vw, calc((100vw - 40px) / 11.5)); line-height: 1.55; }
     .th .hero-text { padding-right: 0; }
     .th .apps { padding: 120px 0 140px; }
     .th .card { padding: 24px; gap: 16px; border-radius: 22px; }

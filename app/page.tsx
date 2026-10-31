@@ -16,16 +16,12 @@ const app = apps[0];
 
 const HERO_COPY = `${siteConfig.operatorName}は、テクノロジーで暮らしを支えるアプリを開発・運営しています。`;
 
-// タイピングの区切り：[確定後の文字, 打つローマ字, 後ろで改行するか]（つなげると HERO_COPY と同じ文になる）
-// 区切りの途中では折り返さない（スマホで「テ／クノロジー」のように切れないように）
+// タイピングの区切り（変換の単位）：[確定後の文字, 打つローマ字, 後ろで改行するか, 折り返してよい塊]
+// つなげると HERO_COPY と同じ文になる。塊の途中では折り返さない（スマホで「テ／クノロジー」のように切れないように）
 const COPY: ImeSegment[] = [
   ["株式会社トイマンは、", "kabushikigaishatoimannha,", true],
-  ["テクノロジーで", "tekunoroji-de"],
-  ["暮らしを", "kurashiwo"],
-  ["支える", "sasaeru"],
-  ["アプリを", "apuriwo"],
-  ["開発・", "kaihatsu/"],
-  ["運営しています。", "unneishiteimasu."],
+  ["テクノロジーで暮らしを支えるアプリを", "tekunoroji-dekurashiwosasaeruapuriwo", true, ["テクノロジーで", "暮らしを", "支える", "アプリを"]],
+  ["開発・運営しています。", "kaihatsu/unneishiteimasu."],
 ];
 
 // ヒーローのスマホに出すアプリ画面（数秒ごとに切り替え）

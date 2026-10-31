@@ -349,7 +349,8 @@
   .ksp .features { position: relative; z-index: 1; padding: 140px 0 60px; }
   .ksp .hook { text-align: center; font-size: clamp(1.7rem, 4.4vw, 3rem); font-weight: 700; line-height: 1.6; letter-spacing: .04em; word-break: auto-phrase; }
   .ksp .hook span { display: inline-block; }
-  .ksp .features { overflow-x: clip; }
+  /* 以前はここで overflow-x: clip していたが、iPhoneの Safari では固定表示（sticky）の祖先に clip/hidden があると
+     固定部分の位置合わせがスクロールに遅れて上下に揺れるため外した（はみ出しは .f-sticky の overflow: hidden で隠れる） */
   .ksp .hook::after { content: ""; display: block; width: 48px; height: 3px; border-radius: 2px; background: var(--green); margin: 32px auto 0; }
   .ksp .feat-list { margin-top: 110px; display: grid; gap: 140px; }
   .ksp .feat { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 64px; }
@@ -413,6 +414,18 @@
     .ksp .f-foot { display: none; }
   }
 
-  /* 縦スクロール→横送り：スクロール量で「何枚目か」を決め、移動は時間で動くトランジションにする（揺れ防止）。KenkouStationView.tsx 参照 */
-  .ksp .feat-list, .ksp .g-track { transition: transform .9s cubic-bezier(.22,.8,.2,1); }
-  .ksp .feat-scroll .g-bar i, .ksp .gallery .g-bar i { transition: transform .9s cubic-bezier(.22,.8,.2,1); }
+  /* 縦スクロール→横移動を、対応ブラウザ（iOS 26 の Safari など）ではCSSだけで動かす。
+     スクロールと同じ流れで描画されるので、JSで動かすよりカクつかない。非対応ならJSで動かす（KenkouStationView.tsx） */
+  @supports (animation-timeline: view()) {
+    /* view-timeline-inset: 0 … 既定（auto）だと html の scroll-padding-top(72px) の分ずれるため */
+    .ksp .feat-scroll { view-timeline: --ksp-feat block; view-timeline-inset: 0; }
+    .ksp .gallery { view-timeline: --ksp-gallery block; view-timeline-inset: 0; }
+    .ksp .feat-list, .ksp .g-track { animation: ksp-slide-x linear both; animation-range: contain 0% contain 100%; }
+    .ksp .feat-list { animation-timeline: --ksp-feat; }
+    .ksp .g-track { animation-timeline: --ksp-gallery; }
+    .ksp .feat-scroll .g-bar i, .ksp .gallery .g-bar i { animation: ksp-bar linear both; animation-range: contain 0% contain 100%; }
+    .ksp .feat-scroll .g-bar i { animation-timeline: --ksp-feat; }
+    .ksp .gallery .g-bar i { animation-timeline: --ksp-gallery; }
+    @keyframes ksp-slide-x { from { transform: translate3d(0,0,0); } to { transform: translate3d(calc(100vw - 100%),0,0); } }
+    @keyframes ksp-bar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  }

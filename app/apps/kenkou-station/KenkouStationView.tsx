@@ -222,53 +222,73 @@ export default function KenkouStationView() {
     // アプリ画面を数秒ごとに切り替え
     cleanups.push(startSlides(root, reduce));
 
-    // 特徴・画面ギャラリー：縦スクロールに合わせて横に送る
-    // スクロール量をそのまま横の位置にすると、iPhoneではスクロールの細かい揺れがそのまま横の揺れになるので、
-    // スクロール量からは「何枚目か」だけを決め、横への移動はCSSのトランジション（時間で動くアニメーション）で行う。
-    // 画面の高さは固定部分（100svh＝ツールバーの出し入れで変わらない高さ）から取り、横幅が変わったときだけ測り直す。
+    // 特徴・画面ギャラリー：縦スクロール量に合わせて横に動かす
+    // スマホでガタつかないよう、
+    //  - 画面の高さは固定部分（100svh＝ツールバーの出し入れで変わらない高さ）から取り、横幅が変わったときだけ測り直す
+    //  - 対応ブラウザでは横移動をCSSのスクロール連動アニメーションに任せる（kenkou-station.css）
+    //  - 非対応ならJSで、目標位置へ毎フレーム少しずつ近づける
     if (!reduce) {
+      // 対応ブラウザでは横移動とバーはCSS（スクロール連動アニメーション）で動かす
+      const cssDriven = typeof CSS !== "undefined" && CSS.supports("animation-timeline: view()");
       // stepVh: 1枚ぶん進むのに必要な縦スクロール量（画面の高さに対する割合）。スマホで速く流れすぎないようにする
       const horizontal = (sec: HTMLElement, track: HTMLElement, items: string, centerClass?: string, stepVh = 0) => {
         const sticky = sec.firstElementChild as HTMLElement;
         const bar = sec.querySelector(".g-bar i") as HTMLElement;
         const now = sec.querySelector(".g-count b") as HTMLElement;
         const cards = track.querySelectorAll<HTMLElement>(items);
-        const last = cards.length - 1;
         let dist = 0;
         let len = 0;
         let width = 0;
-        let index = -1;
+        let best = -1;
         let raf = 0;
-        const show = (i: number, force = false) => {
-          if (i === index && !force) return;
-          index = i;
-          const c = cards[i];
-          // i枚目が画面の真ん中に来る位置（両端ははみ出さないように）
-          const x = Math.min(dist, Math.max(0, c.offsetLeft + c.offsetWidth / 2 - width / 2));
-          track.style.transform = `translate3d(${-x}px,0,0)`;
-          bar.style.transform = `scaleX(${last ? i / last : 0})`;
-          if (centerClass) cards.forEach((card, j) => card.classList.toggle(centerClass, j === i));
-          now.textContent = pad2(i + 1);
-        };
-        const update = () => {
+        let cur = 0; // いま表示している横位置（px）
+        let target = 0; // スクロール位置から決まる横位置（px）
+        // 縦スクロールの値を毎回そのまま使うと、iPhoneの慣性スクロールでイベントの間隔が揃わずガタつくので、
+        // 目標位置へ毎フレーム少しずつ近づける（なめらかに追従させる）
+        const render = () => {
           raf = 0;
+          if (cssDriven) {
+            cur = target; // 動きはCSSに任せて、ここでは番号の更新だけ
+          } else {
+            cur += (target - cur) * 0.2;
+            if (Math.abs(target - cur) < 0.4) cur = target;
+            track.style.transform = `translate3d(${-cur}px,0,0)`;
+            bar.style.transform = `scaleX(${dist ? cur / dist : 0})`;
+          }
+          // 画面の真ん中に一番近いもの
+          const mid = width / 2 + cur;
+          let next = 0;
+          let bd = 1e9;
+          cards.forEach((c, i) => {
+            const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid);
+            if (d < bd) {
+              bd = d;
+              next = i;
+            }
+          });
+          if (next !== best) {
+            best = next;
+            if (centerClass) cards.forEach((c, i) => c.classList.toggle(centerClass, i === best));
+            now.textContent = pad2(best + 1);
+          }
+          if (cur !== target) raf = requestAnimationFrame(render);
+        };
+        const update = (jump?: boolean) => {
           const top = sec.getBoundingClientRect().top;
           const p = len ? Math.min(1, Math.max(0, -top / len)) : 0;
-          show(Math.round(p * last));
+          target = p * dist;
+          if (jump) cur = target;
+          if (!raf) raf = requestAnimationFrame(render);
         };
-        const onScroll = () => {
-          if (!raf) raf = requestAnimationFrame(update);
-        };
+        const onScroll = () => update();
         const size = (force?: unknown) => {
           if (force !== true && window.innerWidth === width) return; // 高さだけの変化（ツールバーの出し入れ）は無視
           width = window.innerWidth;
           const vh = sticky.offsetHeight;
           dist = Math.max(0, track.scrollWidth - width);
-          len = Math.max(dist, last * vh * stepVh);
+          len = Math.max(dist, (cards.length - 1) * vh * stepVh);
           sec.style.height = vh + len + "px";
-          const top = sec.getBoundingClientRect().top;
-          const p = len ? Math.min(1, Math.max(0, -top / len)) : 0;
-          show(Math.round(p * last), true);
+          update(true);
         };
         const onLoad = () => size(true);
         window.addEventListener("scroll", onScroll, { passive: true });
@@ -283,7 +303,7 @@ export default function KenkouStationView() {
         });
       };
       horizontal($(".feat-scroll"), $(".feat-list"), ".feat", undefined, 0.8);
-      horizontal($("#gallery"), $(".g-track"), ".hcard", "is-center", 0.5);
+      horizontal($("#gallery"), $(".g-track"), ".hcard", "is-center");
     }
 
     return () => {

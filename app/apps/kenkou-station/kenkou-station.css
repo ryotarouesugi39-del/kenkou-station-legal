@@ -392,10 +392,16 @@
   .ksp .f-foot .g-bar { flex: 1; }
   @media (max-width: 800px) {
     .ksp .features { padding-bottom: 0; }
-    .ksp .feat { gap: 16px; padding: 0 20px; }
-    .ksp .feat-text p { margin-top: 10px; line-height: 1.8; }
-    .ksp .feat-media { padding: 14px; }
-    .ksp .fphone { width: min(220px, calc((100svh - 400px) * 9 / 19)); }
+    .ksp .f-sticky { padding-top: 58px; gap: 4px; }
+    .ksp .feat { gap: 10px; padding: 0 20px; }
+    /* 番号は上の「01 / 04」で分かるので、スマホでは画面を大きく見せるために省く */
+    .ksp .feat-num { display: none; }
+    .ksp .feat-text h3 { font-size: 1.6rem; }
+    .ksp .feat-text p { margin-top: 6px; font-size: 1rem; line-height: 1.7; }
+    .ksp .feat-media { padding: 8px; }
+    .ksp .feat-blob { filter: none; }
+    .ksp .fphone { width: min(250px, 66vw, calc((100svh - 250px) * 9 / 19)); border-radius: 34px; padding: 8px; }
+    .ksp .fscreen { border-radius: 27px; }
     /* 下の追従ナビと重ならないよう、進み具合は上に出す */
     .ksp .f-foot { order: -1; margin-bottom: 8px; }
   }

@@ -223,47 +223,66 @@ export default function KenkouStationView() {
     cleanups.push(startSlides(root, reduce));
 
     // 特徴・画面ギャラリー：縦スクロール量に合わせて横に動かす
+    // スマホでガタつかないよう、
+    //  - 画面の高さは固定部分（100svh＝ツールバーの出し入れで変わらない高さ）から取り、横幅が変わったときだけ測り直す
+    //  - 描画は requestAnimationFrame で1フレームに1回だけ
     if (!reduce) {
       // stepVh: 1枚ぶん進むのに必要な縦スクロール量（画面の高さに対する割合）。スマホで速く流れすぎないようにする
       const horizontal = (sec: HTMLElement, track: HTMLElement, items: string, centerClass?: string, stepVh = 0) => {
+        const sticky = sec.firstElementChild as HTMLElement;
         const bar = sec.querySelector(".g-bar i") as HTMLElement;
         const now = sec.querySelector(".g-count b") as HTMLElement;
         const cards = track.querySelectorAll<HTMLElement>(items);
         let dist = 0;
         let len = 0;
+        let width = 0;
+        let best = -1;
+        let raf = 0;
         const update = () => {
+          raf = 0;
           const top = sec.getBoundingClientRect().top;
           const p = len ? Math.min(1, Math.max(0, -top / len)) : 0;
-          track.style.transform = `translateX(${-p * dist}px)`;
+          track.style.transform = `translate3d(${-p * dist}px,0,0)`;
           bar.style.transform = `scaleX(${p})`;
-          const mid = window.innerWidth / 2;
-          let best = 0;
+          // 画面の真ん中に一番近いもの
+          const mid = window.innerWidth / 2 + p * dist;
+          let next = 0;
           let bd = 1e9;
           cards.forEach((c, i) => {
-            const r = c.getBoundingClientRect();
-            const d = Math.abs(r.left + r.width / 2 - mid);
+            const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid);
             if (d < bd) {
               bd = d;
-              best = i;
+              next = i;
             }
           });
-          if (centerClass) cards.forEach((c, i) => c.classList.toggle(centerClass, i === best));
-          now.textContent = pad2(best + 1);
+          if (next !== best) {
+            best = next;
+            if (centerClass) cards.forEach((c, i) => c.classList.toggle(centerClass, i === best));
+            now.textContent = pad2(best + 1);
+          }
         };
-        const size = () => {
-          dist = Math.max(0, track.scrollWidth - window.innerWidth);
-          len = Math.max(dist, (cards.length - 1) * window.innerHeight * stepVh);
-          sec.style.height = window.innerHeight + len + "px";
+        const onScroll = () => {
+          if (!raf) raf = requestAnimationFrame(update);
+        };
+        const size = (force?: unknown) => {
+          if (force !== true && window.innerWidth === width) return; // 高さだけの変化（ツールバーの出し入れ）は無視
+          width = window.innerWidth;
+          const vh = sticky.offsetHeight;
+          dist = Math.max(0, track.scrollWidth - width);
+          len = Math.max(dist, (cards.length - 1) * vh * stepVh);
+          sec.style.height = vh + len + "px";
           update();
         };
-        window.addEventListener("scroll", update, { passive: true });
+        const onLoad = () => size(true);
+        window.addEventListener("scroll", onScroll, { passive: true });
         window.addEventListener("resize", size);
-        window.addEventListener("load", size);
-        size();
+        window.addEventListener("load", onLoad);
+        size(true);
         cleanups.push(() => {
-          window.removeEventListener("scroll", update);
+          if (raf) cancelAnimationFrame(raf);
+          window.removeEventListener("scroll", onScroll);
           window.removeEventListener("resize", size);
-          window.removeEventListener("load", size);
+          window.removeEventListener("load", onLoad);
         });
       };
       horizontal($(".feat-scroll"), $(".feat-list"), ".feat", undefined, 0.8);

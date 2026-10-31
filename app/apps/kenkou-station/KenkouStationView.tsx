@@ -225,8 +225,11 @@ export default function KenkouStationView() {
     // 特徴・画面ギャラリー：縦スクロール量に合わせて横に動かす
     // スマホでガタつかないよう、
     //  - 画面の高さは固定部分（100svh＝ツールバーの出し入れで変わらない高さ）から取り、横幅が変わったときだけ測り直す
-    //  - 描画は requestAnimationFrame で1フレームに1回だけ
+    //  - 対応ブラウザでは横移動をCSSのスクロール連動アニメーションに任せる（kenkou-station.css）
+    //  - 非対応ならJSで、目標位置へ毎フレーム少しずつ近づける
     if (!reduce) {
+      // 対応ブラウザでは横移動とバーはCSS（スクロール連動アニメーション）で動かす
+      const cssDriven = typeof CSS !== "undefined" && CSS.supports("animation-timeline: view()");
       // stepVh: 1枚ぶん進むのに必要な縦スクロール量（画面の高さに対する割合）。スマホで速く流れすぎないようにする
       const horizontal = (sec: HTMLElement, track: HTMLElement, items: string, centerClass?: string, stepVh = 0) => {
         const sticky = sec.firstElementChild as HTMLElement;
@@ -244,10 +247,14 @@ export default function KenkouStationView() {
         // 目標位置へ毎フレーム少しずつ近づける（なめらかに追従させる）
         const render = () => {
           raf = 0;
-          cur += (target - cur) * 0.2;
-          if (Math.abs(target - cur) < 0.4) cur = target;
-          track.style.transform = `translate3d(${-cur}px,0,0)`;
-          bar.style.transform = `scaleX(${dist ? cur / dist : 0})`;
+          if (cssDriven) {
+            cur = target; // 動きはCSSに任せて、ここでは番号の更新だけ
+          } else {
+            cur += (target - cur) * 0.2;
+            if (Math.abs(target - cur) < 0.4) cur = target;
+            track.style.transform = `translate3d(${-cur}px,0,0)`;
+            bar.style.transform = `scaleX(${dist ? cur / dist : 0})`;
+          }
           // 画面の真ん中に一番近いもの
           const mid = width / 2 + cur;
           let next = 0;

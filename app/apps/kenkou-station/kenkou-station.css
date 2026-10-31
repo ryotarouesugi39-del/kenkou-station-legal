@@ -412,3 +412,19 @@
     .ksp .feat { width: auto; }
     .ksp .f-foot { display: none; }
   }
+
+  /* 縦スクロール→横移動を、対応ブラウザ（iOS 26 の Safari など）ではCSSだけで動かす。
+     スクロールと同じ流れで描画されるので、JSで動かすよりカクつかない。非対応ならJSで動かす（KenkouStationView.tsx） */
+  @supports (animation-timeline: view()) {
+    /* view-timeline-inset: 0 … 既定（auto）だと html の scroll-padding-top(72px) の分ずれるため */
+    .ksp .feat-scroll { view-timeline: --ksp-feat block; view-timeline-inset: 0; }
+    .ksp .gallery { view-timeline: --ksp-gallery block; view-timeline-inset: 0; }
+    .ksp .feat-list, .ksp .g-track { animation: ksp-slide-x linear both; animation-range: contain 0% contain 100%; }
+    .ksp .feat-list { animation-timeline: --ksp-feat; }
+    .ksp .g-track { animation-timeline: --ksp-gallery; }
+    .ksp .feat-scroll .g-bar i, .ksp .gallery .g-bar i { animation: ksp-bar linear both; animation-range: contain 0% contain 100%; }
+    .ksp .feat-scroll .g-bar i { animation-timeline: --ksp-feat; }
+    .ksp .gallery .g-bar i { animation-timeline: --ksp-gallery; }
+    @keyframes ksp-slide-x { from { transform: translate3d(0,0,0); } to { transform: translate3d(calc(100vw - 100%),0,0); } }
+    @keyframes ksp-bar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  }

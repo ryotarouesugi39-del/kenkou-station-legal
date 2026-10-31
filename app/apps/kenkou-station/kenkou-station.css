@@ -349,7 +349,8 @@
   .ksp .features { position: relative; z-index: 1; padding: 140px 0 60px; }
   .ksp .hook { text-align: center; font-size: clamp(1.7rem, 4.4vw, 3rem); font-weight: 700; line-height: 1.6; letter-spacing: .04em; word-break: auto-phrase; }
   .ksp .hook span { display: inline-block; }
-  .ksp .features { overflow-x: clip; }
+  /* 以前はここで overflow-x: clip していたが、iPhoneの Safari では固定表示（sticky）の祖先に clip/hidden があると
+     固定部分の位置合わせがスクロールに遅れて上下に揺れるため外した（はみ出しは .f-sticky の overflow: hidden で隠れる） */
   .ksp .hook::after { content: ""; display: block; width: 48px; height: 3px; border-radius: 2px; background: var(--green); margin: 32px auto 0; }
   .ksp .feat-list { margin-top: 110px; display: grid; gap: 140px; }
   .ksp .feat { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 64px; }
@@ -379,4 +380,52 @@
     .ksp .feat-text { justify-self: start; max-width: none; }
     .ksp .feat-num { font-size: 3.2rem; margin-bottom: 14px; }
     .ksp .fphone { width: 220px; }
+  }
+
+  /* 特徴：縦スクロールで横に流れる（セクションを画面に固定して、特徴を1つずつ横にスライド） */
+  .ksp .features { padding-bottom: 0; }
+  .ksp .feat-scroll { position: relative; height: 400vh; }
+  .ksp .f-sticky { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: 8px; padding-top: 64px; }
+  .ksp .feat-list { margin-top: 0; display: flex; gap: 0; width: max-content; will-change: transform; }
+  .ksp .feat { flex-shrink: 0; width: 100vw; padding: 0 max(28px, calc((100vw - 1080px) / 2 + 28px)); }
+  .ksp .fphone { width: min(250px, calc((100svh - 260px) * 9 / 19)); }
+  .ksp .f-foot { display: flex; align-items: center; gap: 20px; }
+  .ksp .f-foot .g-bar { flex: 1; }
+  @media (max-width: 800px) {
+    .ksp .features { padding-bottom: 0; }
+    .ksp .f-sticky { padding-top: 58px; gap: 4px; }
+    .ksp .feat { gap: 10px; padding: 0 20px; }
+    /* 番号は上の「01 / 04」で分かるので、スマホでは画面を大きく見せるために省く */
+    .ksp .feat-num { display: none; }
+    .ksp .feat-text h3 { font-size: 1.6rem; }
+    .ksp .feat-text p { margin-top: 6px; font-size: 1rem; line-height: 1.7; }
+    .ksp .feat-media { padding: 8px; }
+    .ksp .feat-blob { filter: none; }
+    .ksp .fphone { width: min(250px, 66vw, calc((100svh - 250px) * 9 / 19)); border-radius: 34px; padding: 8px; }
+    .ksp .fscreen { border-radius: 27px; }
+    /* 下の追従ナビと重ならないよう、進み具合は上に出す */
+    .ksp .f-foot { order: -1; margin-bottom: 8px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ksp .feat-scroll { height: auto; }
+    .ksp .f-sticky { position: static; height: auto; padding: 110px 0 60px; }
+    .ksp .feat-list { display: grid; gap: 140px; width: auto; }
+    .ksp .feat { width: auto; }
+    .ksp .f-foot { display: none; }
+  }
+
+  /* 縦スクロール→横移動を、対応ブラウザ（iOS 26 の Safari など）ではCSSだけで動かす。
+     スクロールと同じ流れで描画されるので、JSで動かすよりカクつかない。非対応ならJSで動かす（KenkouStationView.tsx） */
+  @supports (animation-timeline: view()) {
+    /* view-timeline-inset: 0 … 既定（auto）だと html の scroll-padding-top(72px) の分ずれるため */
+    .ksp .feat-scroll { view-timeline: --ksp-feat block; view-timeline-inset: 0; }
+    .ksp .gallery { view-timeline: --ksp-gallery block; view-timeline-inset: 0; }
+    .ksp .feat-list, .ksp .g-track { animation: ksp-slide-x linear both; animation-range: contain 0% contain 100%; }
+    .ksp .feat-list { animation-timeline: --ksp-feat; }
+    .ksp .g-track { animation-timeline: --ksp-gallery; }
+    .ksp .feat-scroll .g-bar i, .ksp .gallery .g-bar i { animation: ksp-bar linear both; animation-range: contain 0% contain 100%; }
+    .ksp .feat-scroll .g-bar i { animation-timeline: --ksp-feat; }
+    .ksp .gallery .g-bar i { animation-timeline: --ksp-gallery; }
+    @keyframes ksp-slide-x { from { transform: translate3d(0,0,0); } to { transform: translate3d(calc(100vw - 100%),0,0); } }
+    @keyframes ksp-bar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
   }

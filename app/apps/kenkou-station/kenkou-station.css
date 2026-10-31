@@ -380,3 +380,29 @@
     .ksp .feat-num { font-size: 3.2rem; margin-bottom: 14px; }
     .ksp .fphone { width: 220px; }
   }
+
+  /* 特徴：縦スクロールで横に流れる（セクションを画面に固定して、特徴を1つずつ横にスライド） */
+  .ksp .features { padding-bottom: 0; }
+  .ksp .feat-scroll { position: relative; height: 400vh; }
+  .ksp .f-sticky { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: 8px; padding-top: 64px; }
+  .ksp .feat-list { margin-top: 0; display: flex; gap: 0; width: max-content; will-change: transform; }
+  .ksp .feat { flex-shrink: 0; width: 100vw; padding: 0 max(28px, calc((100vw - 1080px) / 2 + 28px)); }
+  .ksp .fphone { width: min(250px, calc((100svh - 260px) * 9 / 19)); }
+  .ksp .f-foot { display: flex; align-items: center; gap: 20px; }
+  .ksp .f-foot .g-bar { flex: 1; }
+  @media (max-width: 800px) {
+    .ksp .features { padding-bottom: 0; }
+    .ksp .feat { gap: 16px; padding: 0 20px; }
+    .ksp .feat-text p { margin-top: 10px; line-height: 1.8; }
+    .ksp .feat-media { padding: 14px; }
+    .ksp .fphone { width: min(220px, calc((100svh - 400px) * 9 / 19)); }
+    /* 下の追従ナビと重ならないよう、進み具合は上に出す */
+    .ksp .f-foot { order: -1; margin-bottom: 8px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ksp .feat-scroll { height: auto; }
+    .ksp .f-sticky { position: static; height: auto; padding: 110px 0 60px; }
+    .ksp .feat-list { display: grid; gap: 140px; width: auto; }
+    .ksp .feat { width: auto; }
+    .ksp .f-foot { display: none; }
+  }

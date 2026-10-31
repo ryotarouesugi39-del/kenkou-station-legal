@@ -222,47 +222,52 @@ export default function KenkouStationView() {
     // アプリ画面を数秒ごとに切り替え
     cleanups.push(startSlides(root, reduce));
 
-    // 画面ギャラリー：縦スクロール量に合わせて横に動かす
+    // 特徴・画面ギャラリー：縦スクロール量に合わせて横に動かす
     if (!reduce) {
-      const sec = $("#gallery");
-      const track = $(".g-track");
-      const bar = $(".g-bar i");
-      const now = $(".g-now");
-      const cards = track.querySelectorAll<HTMLElement>(".hcard");
-      let dist = 0;
-      const update = () => {
-        const top = sec.getBoundingClientRect().top;
-        const p = dist ? Math.min(1, Math.max(0, -top / dist)) : 0;
-        track.style.transform = `translateX(${-p * dist}px)`;
-        bar.style.transform = `scaleX(${p})`;
-        const mid = window.innerWidth / 2;
-        let best = 0;
-        let bd = 1e9;
-        cards.forEach((c, i) => {
-          const r = c.getBoundingClientRect();
-          const d = Math.abs(r.left + r.width / 2 - mid);
-          if (d < bd) {
-            bd = d;
-            best = i;
-          }
+      // stepVh: 1枚ぶん進むのに必要な縦スクロール量（画面の高さに対する割合）。スマホで速く流れすぎないようにする
+      const horizontal = (sec: HTMLElement, track: HTMLElement, items: string, centerClass?: string, stepVh = 0) => {
+        const bar = sec.querySelector(".g-bar i") as HTMLElement;
+        const now = sec.querySelector(".g-count b") as HTMLElement;
+        const cards = track.querySelectorAll<HTMLElement>(items);
+        let dist = 0;
+        let len = 0;
+        const update = () => {
+          const top = sec.getBoundingClientRect().top;
+          const p = len ? Math.min(1, Math.max(0, -top / len)) : 0;
+          track.style.transform = `translateX(${-p * dist}px)`;
+          bar.style.transform = `scaleX(${p})`;
+          const mid = window.innerWidth / 2;
+          let best = 0;
+          let bd = 1e9;
+          cards.forEach((c, i) => {
+            const r = c.getBoundingClientRect();
+            const d = Math.abs(r.left + r.width / 2 - mid);
+            if (d < bd) {
+              bd = d;
+              best = i;
+            }
+          });
+          if (centerClass) cards.forEach((c, i) => c.classList.toggle(centerClass, i === best));
+          now.textContent = pad2(best + 1);
+        };
+        const size = () => {
+          dist = Math.max(0, track.scrollWidth - window.innerWidth);
+          len = Math.max(dist, (cards.length - 1) * window.innerHeight * stepVh);
+          sec.style.height = window.innerHeight + len + "px";
+          update();
+        };
+        window.addEventListener("scroll", update, { passive: true });
+        window.addEventListener("resize", size);
+        window.addEventListener("load", size);
+        size();
+        cleanups.push(() => {
+          window.removeEventListener("scroll", update);
+          window.removeEventListener("resize", size);
+          window.removeEventListener("load", size);
         });
-        cards.forEach((c, i) => c.classList.toggle("is-center", i === best));
-        now.textContent = pad2(best + 1);
       };
-      const size = () => {
-        dist = Math.max(0, track.scrollWidth - window.innerWidth);
-        sec.style.height = window.innerHeight + dist + "px";
-        update();
-      };
-      window.addEventListener("scroll", update, { passive: true });
-      window.addEventListener("resize", size);
-      window.addEventListener("load", size);
-      size();
-      cleanups.push(() => {
-        window.removeEventListener("scroll", update);
-        window.removeEventListener("resize", size);
-        window.removeEventListener("load", size);
-      });
+      horizontal($(".feat-scroll"), $(".feat-list"), ".feat", undefined, 0.8);
+      horizontal($("#gallery"), $(".g-track"), ".hcard", "is-center");
     }
 
     return () => {
@@ -354,30 +359,42 @@ export default function KenkouStationView() {
                 <span key={t}>{t}</span>
               ))}
             </p>
-            <div className="feat-list">
-              {FEATURES.map((f, i) => (
-                <article key={f.title} className={`feat${i % 2 ? " rev" : ""}`}>
-                  <div className="feat-text reveal">
-                    <span className="feat-num" aria-hidden="true">
-                      {pad2(i + 1)}
-                    </span>
-                    <h3>
-                      <span className="sr">{i + 1}. </span>
-                      {f.title}
-                    </h3>
-                    <p>{f.text}</p>
-                  </div>
-                  <div className="feat-media reveal d1">
-                    <div className="feat-blob" aria-hidden="true"></div>
-                    <div className="fphone">
-                      <div className="fscreen" style={{ background: f.bg }}>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={f.img} alt={f.alt} loading="lazy" />
+          </div>
+          <div className="feat-scroll">
+            <div className="f-sticky">
+              <div className="feat-list">
+                {FEATURES.map((f, i) => (
+                  <article key={f.title} className={`feat${i % 2 ? " rev" : ""}`}>
+                    <div className="feat-text reveal">
+                      <span className="feat-num" aria-hidden="true">
+                        {pad2(i + 1)}
+                      </span>
+                      <h3>
+                        <span className="sr">{i + 1}. </span>
+                        {f.title}
+                      </h3>
+                      <p>{f.text}</p>
+                    </div>
+                    <div className="feat-media reveal d1">
+                      <div className="feat-blob" aria-hidden="true"></div>
+                      <div className="fphone">
+                        <div className="fscreen" style={{ background: f.bg }}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={f.img} alt={f.alt} loading="lazy" />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </article>
-              ))}
+                  </article>
+                ))}
+              </div>
+              <div className="wrap f-foot">
+                <div className="g-bar" aria-hidden="true">
+                  <i></i>
+                </div>
+                <div className="g-count" aria-hidden="true">
+                  <b className="f-now">01</b> / {pad2(FEATURES.length)}
+                </div>
+              </div>
             </div>
           </div>
         </section>

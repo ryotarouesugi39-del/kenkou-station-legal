@@ -53,6 +53,7 @@
   @keyframes ksp-ldRise { to { transform: none; } }
   /* 日本語入力風タイピング（ローマ字→かな→変換） */
   .ksp .ime-done, .ksp .ghost { white-space: pre-wrap; }
+  .ksp .seg { display: inline-block; }
   .ksp .ime { text-decoration: underline dashed 2px; text-decoration-color: var(--green); text-underline-offset: .2em; }
   .ksp .ime.is-roma { color: var(--green); }
   .ksp .ime.is-conv { text-decoration: underline solid 3px; text-decoration-color: var(--green); background: rgba(134,185,168,.28); border-radius: 4px; }

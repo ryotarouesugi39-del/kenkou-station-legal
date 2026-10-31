@@ -88,7 +88,7 @@ function kata(s: string) {
   return s.replace(/[ぁ-ゖ]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) + 96));
 }
 
-/** [確定後の文字, 打つローマ字, 確定後に改行するか] */
+/** [確定後の文字, 打つローマ字, 確定後に改行するか]。1つの区切りの中では折り返さない */
 export type ImeSegment = [string, string, boolean?];
 
 /** 日本語入力風タイピング（ローマ字で打つ → かなになる → 変換キーで漢字/カタカナに → 確定） */
@@ -102,12 +102,18 @@ export function imeType(el: HTMLElement, segs: ImeSegment[], timers: Timers, don
   const caret = el.querySelector(".caret") as HTMLElement;
   const ghost = el.querySelector(".ghost") as HTMLElement;
   let si = 0;
-  let committed = "";
-  const rest = () =>
-    segs
-      .slice(si + 1)
-      .map((s) => s[0] + (s[2] ? "\n" : ""))
-      .join("");
+  // 区切りごとに折り返さない塊（.seg）にして、単語の途中で改行されないようにする
+  const fill = (target: HTMLElement, list: ImeSegment[], leadingBreak = false) => {
+    target.textContent = "";
+    if (leadingBreak) target.appendChild(document.createElement("br"));
+    list.forEach((s) => {
+      const span = document.createElement("span");
+      span.className = "seg";
+      span.textContent = s[0];
+      target.appendChild(span);
+      if (s[2]) target.appendChild(document.createElement("br"));
+    });
+  };
 
   function seg() {
     if (si >= segs.length) {
@@ -119,11 +125,10 @@ export function imeType(el: HTMLElement, segs: ImeSegment[], timers: Timers, don
     const target = segs[si][0];
     const roma = segs[si][1];
     let k = 0;
-    ghost.textContent = (segs[si][2] ? "\n" : "") + rest();
+    fill(ghost, segs.slice(si + 1), !!segs[si][2]);
 
     function commit() {
-      committed += target + (segs[si][2] ? "\n" : "");
-      doneEl.textContent = committed;
+      fill(doneEl, segs.slice(0, si + 1));
       comp.textContent = "";
       comp.className = "ime";
       si++;

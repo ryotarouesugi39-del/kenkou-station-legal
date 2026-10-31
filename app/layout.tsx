@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
 
@@ -25,6 +26,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </nav>
           <p>© {siteConfig.operatorName}</p>
         </footer>
+        {/* 訪問数の計測（Vercel Web Analytics。Cookieなし・個人を特定しない集計のみ） */}
+        <Analytics />
       </body>
     </html>
   );

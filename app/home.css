@@ -54,6 +54,7 @@
   @keyframes ldRise { to { transform: none; } }
   /* 日本語入力風タイピング（ローマ字→かな→変換） */
   .th .ime-done, .th .ghost { white-space: pre-wrap; }
+  .th .seg { display: inline-block; }
   .th .ime { text-decoration: underline dashed 2px; text-decoration-color: var(--green); text-underline-offset: .2em; }
   .th .ime.is-roma { color: var(--green); }
   .th .ime.is-conv { text-decoration: underline solid 3px; text-decoration-color: var(--green); background: rgba(134,185,168,.28); border-radius: 4px; }

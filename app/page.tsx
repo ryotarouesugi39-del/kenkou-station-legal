@@ -3,7 +3,7 @@
 // トップページ（会社HP）。デザイン案（design-v2.html）をそのまま移したもの。
 // 演出は useEffect の中でデザイン案のスクリプトと同じように DOM を直接動かす（再描画しない）。
 
-import { useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
 import { apps } from "@/config/apps";
@@ -16,10 +16,14 @@ const app = apps[0];
 
 const HERO_COPY = `${siteConfig.operatorName}は、テクノロジーで暮らしを支えるアプリを開発・運営しています。`;
 
-// タイピングの区切り：[確定後の文字, 打つローマ字]（つなげると HERO_COPY と同じ文になる）
+// タイピングの区切り：[確定後の文字, 打つローマ字, 後ろで改行するか]（つなげると HERO_COPY と同じ文になる）
+// 区切りの途中では折り返さない（スマホで「テ／クノロジー」のように切れないように）
 const COPY: ImeSegment[] = [
-  ["株式会社トイマンは、", "kabushikigaishatoimannha,"],
-  ["テクノロジーで暮らしを支えるアプリを", "tekunoroji-dekurashiwosasaeruapuriwo"],
+  ["株式会社トイマンは、", "kabushikigaishatoimannha,", true],
+  ["テクノロジーで", "tekunoroji-de"],
+  ["暮らしを", "kurashiwo"],
+  ["支える", "sasaeru"],
+  ["アプリを", "apuriwo"],
   ["開発・", "kaihatsu/"],
   ["運営しています。", "unneishiteimasu."],
 ];
@@ -180,7 +184,16 @@ export default function Home() {
           <div className="band" aria-hidden="true"></div>
           <div className="wrap">
             <div className="hero-text">
-              <p className="hero-copy">{HERO_COPY}</p>
+              <p className="hero-copy" aria-label={HERO_COPY}>
+                {COPY.map(([text, , br]) => (
+                  <Fragment key={text}>
+                    <span className="seg" aria-hidden="true">
+                      {text}
+                    </span>
+                    {br && <br />}
+                  </Fragment>
+                ))}
+              </p>
               <div className="hero-meta" aria-hidden="true">
                 TOIMAN<i></i>APPS
               </div>

@@ -238,14 +238,18 @@ export default function KenkouStationView() {
         let width = 0;
         let best = -1;
         let raf = 0;
-        const update = () => {
+        let cur = 0; // いま表示している横位置（px）
+        let target = 0; // スクロール位置から決まる横位置（px）
+        // 縦スクロールの値を毎回そのまま使うと、iPhoneの慣性スクロールでイベントの間隔が揃わずガタつくので、
+        // 目標位置へ毎フレーム少しずつ近づける（なめらかに追従させる）
+        const render = () => {
           raf = 0;
-          const top = sec.getBoundingClientRect().top;
-          const p = len ? Math.min(1, Math.max(0, -top / len)) : 0;
-          track.style.transform = `translate3d(${-p * dist}px,0,0)`;
-          bar.style.transform = `scaleX(${p})`;
+          cur += (target - cur) * 0.2;
+          if (Math.abs(target - cur) < 0.4) cur = target;
+          track.style.transform = `translate3d(${-cur}px,0,0)`;
+          bar.style.transform = `scaleX(${dist ? cur / dist : 0})`;
           // 画面の真ん中に一番近いもの
-          const mid = window.innerWidth / 2 + p * dist;
+          const mid = width / 2 + cur;
           let next = 0;
           let bd = 1e9;
           cards.forEach((c, i) => {
@@ -260,10 +264,16 @@ export default function KenkouStationView() {
             if (centerClass) cards.forEach((c, i) => c.classList.toggle(centerClass, i === best));
             now.textContent = pad2(best + 1);
           }
+          if (cur !== target) raf = requestAnimationFrame(render);
         };
-        const onScroll = () => {
-          if (!raf) raf = requestAnimationFrame(update);
+        const update = (jump?: boolean) => {
+          const top = sec.getBoundingClientRect().top;
+          const p = len ? Math.min(1, Math.max(0, -top / len)) : 0;
+          target = p * dist;
+          if (jump) cur = target;
+          if (!raf) raf = requestAnimationFrame(render);
         };
+        const onScroll = () => update();
         const size = (force?: unknown) => {
           if (force !== true && window.innerWidth === width) return; // 高さだけの変化（ツールバーの出し入れ）は無視
           width = window.innerWidth;
@@ -271,7 +281,7 @@ export default function KenkouStationView() {
           dist = Math.max(0, track.scrollWidth - width);
           len = Math.max(dist, (cards.length - 1) * vh * stepVh);
           sec.style.height = vh + len + "px";
-          update();
+          update(true);
         };
         const onLoad = () => size(true);
         window.addEventListener("scroll", onScroll, { passive: true });

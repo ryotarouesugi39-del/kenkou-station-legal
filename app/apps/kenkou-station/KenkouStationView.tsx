@@ -1,16 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import Image from "next/image";
+// 健康ステーションの概要ページ。デザイン案（kenkou-station.html）をそのまま移したもの。
+// 演出は useEffect の中でデザイン案のスクリプトと同じように DOM を直接動かす（再描画しない）。
+
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
 import { getApp } from "@/config/apps";
+import Loader from "../../_components/Loader";
+import { HEART_PATH, Timers, imeType, runLoader, startSlides, type ImeSegment } from "@/lib/intro";
 import "./kenkou-station.css";
 
 const app = getApp("kenkou-station")!;
-
-// アプリアイコン（public/ 配下）
-const APP_ICON = "/kenkou-station-icon.png";
 
 type Store = "ios" | "android";
 
@@ -26,8 +27,68 @@ const STORES: { store: Store; url: string | undefined; name: string; sub: string
   },
 ];
 
+// タイトルのタイピングの区切り：[確定後の文字, 打つローマ字]
+const TITLE: ImeSegment[] = [
+  ["健康", "kenkou"],
+  ["ステーション", "sute-shonn"],
+];
+
+const IMG = "/images/kenkou-station";
+
+// ヒーローのスマホに出すアプリ画面（数秒ごとに切り替え）
+const HERO_SLIDES = [
+  { src: `${IMG}/screen-measure.jpg`, bg: "linear-gradient(#3d8263 0 30px,#f5f5f5 30px)" },
+  { src: `${IMG}/screen-graph.jpg`, bg: "linear-gradient(#188462 0 30px,#f5f5f5 30px)" },
+  { src: `${IMG}/screen-home.jpg`, bg: "linear-gradient(#3e8264 0 30px,#f5f5f5 30px)" },
+];
+
+// フック＋特徴
+const HOOK = ["毎日の健康記録を、", "家族の安心に。"];
+const FEATURES = [
+  {
+    title: "かんたん記録",
+    text: "血圧計や体重計の画面を撮るか、話すだけで入力。",
+    img: `${IMG}/feature-record.jpg`,
+    alt: "測定画面",
+    bg: "linear-gradient(#3d8263 0 26px,#f5f5f5 26px)",
+  },
+  {
+    title: "家族に共有",
+    text: "招待コードでつながって、離れた家族も記録を確認。",
+    img: `${IMG}/feature-family.jpg`,
+    alt: "家族が見る健康データ画面",
+    bg: "linear-gradient(#3e8264 0 26px,#f5f5f5 26px)",
+  },
+  {
+    title: "食事分析",
+    text: "料理の写真から、カロリーや栄養のバランスをAIがチェック。",
+    img: `${IMG}/feature-meal.jpg`,
+    alt: "食事の分析結果画面",
+    bg: "linear-gradient(#f5f5f5 0 26px,#f5f5f5 26px)",
+  },
+  {
+    title: "AI分析",
+    text: "記録をもとに、AIが週・月のふりかえりレポートを作成。",
+    img: `${IMG}/feature-ai.jpg`,
+    alt: "健康データのグラフ画面",
+    bg: "linear-gradient(#3e8264 0 26px,#f5f5f5 26px)",
+  },
+];
+
+// 画面ギャラリー（--ar は画像の縦横比）
+const GALLERY = [
+  { src: `${IMG}/screen-measure.jpg`, alt: "測定画面", r: "-2deg", y: "-30px", ar: "1.652" },
+  { src: `${IMG}/screen-graph.jpg`, alt: "健康データのグラフ画面", r: "1.5deg", y: "40px", ar: "1.898" },
+  { src: `${IMG}/screen-home.jpg`, alt: "健康データ（ホーム）画面", r: "-1deg", y: "-20px", ar: "2.020" },
+  { src: `${IMG}/screen-alerts.jpg`, alt: "警告履歴の画面", r: "2deg", y: "30px", ar: "1.898" },
+  { src: `${IMG}/screen-meal-log.jpg`, alt: "食事記録の画面", r: "-1.5deg", y: "-35px", ar: "1.898" },
+  { src: `${IMG}/screen-meal-result.jpg`, alt: "食事の分析結果の画面", r: "1deg", y: "25px", ar: "1.241" },
+  { src: `${IMG}/screen-ai-chat.jpg`, alt: "家族専用AIチャットの画面", r: "-2deg", y: "-15px", ar: "1.993" },
+];
+
 const SECTIONS = [
   { id: "top", label: "TOP" },
+  { id: "features", label: "FEATURES" },
   { id: "download", label: "DOWNLOAD" },
   { id: "info", label: "INFO" },
 ];
@@ -39,156 +100,182 @@ const INFO_LINKS = [
   { href: "/tokushoho", label: "特定商取引法に基づく表記" },
 ];
 
-// アイコン画像の元になったハートの形（イラスト・演出用）
-const HEART_PATH =
-  "M50 84 C 26 68, 13 53, 13 37 C 13 24, 23 15, 34 15 C 42 15, 47 20, 50 26 C 53 20, 58 15, 66 15 C 77 15, 87 24, 87 37 C 87 53, 74 68, 50 84 Z";
-
-/** 閲覧中の端末（Android / iPhone・iPad / それ以外は空文字）。サーバー描画時は空文字 */
-function detectDevice(): Store | "" {
-  const ua = navigator.userAgent;
-  if (/Android/.test(ua)) return "android";
-  if (/iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) {
-    return "ios";
-  }
-  return "";
-}
-const noopSubscribe = () => () => {};
+const pad2 = (n: number) => String(n).padStart(2, "0");
 
 const ArrowIcon = () => (
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2.2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M5 12h14M13 6l6 6-6 6" />
   </svg>
 );
 
+const DownloadIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
+  </svg>
+);
+
 export default function KenkouStationView() {
-  const device = useSyncExternalStore(noopSubscribe, detectDevice, () => "" as const);
-  // ヒーローで強調するストア（端末が分からないときは App Store）
-  const mine: Store = device || "ios";
+  const rootRef = useRef<HTMLDivElement>(null);
+  const loaderRef = useRef<HTMLDivElement>(null);
 
-  const [loaded, setLoaded] = useState(false);
-  const [ready, setReady] = useState(false);
-  const [typed, setTyped] = useState(false);
-  // タイトルのタイピング中に表示済みの文字数（null のときは全文をそのまま表示）
-  const [typedCount, setTypedCount] = useState<number | null>(null);
-  const [scrolled, setScrolled] = useState(false);
-  const [dockShown, setDockShown] = useState(false);
-  const [active, setActive] = useState("top");
-  const heroDlRef = useRef<HTMLDivElement>(null);
-  const pillsRef = useRef<HTMLDivElement>(null);
-  const indicatorRef = useRef<HTMLSpanElement>(null);
-
-  const titleChars = Array.from(app.name);
-
-  // ローディング → 表示開始 → タイトルをタイピング風に表示 → 説明文とボタンを表示
   useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const $ = <T extends HTMLElement = HTMLElement>(sel: string) => root.querySelector(sel) as T;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const timers: number[] = [];
-    timers.push(
-      window.setTimeout(
-        () => {
-          setLoaded(true);
-          setReady(true);
-          if (reduce) {
-            setTyped(true);
-            return;
-          }
-          let i = 0;
-          const next = () => {
-            i++;
-            setTypedCount(i);
-            if (i < titleChars.length) timers.push(window.setTimeout(next, 95 + Math.random() * 70));
-            else setTyped(true);
-          };
-          timers.push(
-            window.setTimeout(() => {
-              setTypedCount(0);
-              next();
-            }, 900),
-          );
-        },
-        reduce ? 0 : 800,
-      ),
-    );
-    return () => timers.forEach((t) => clearTimeout(t));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const timers = new Timers();
+    const cleanups: (() => void)[] = [];
 
-  // ヘッダーの背景、下のダウンロード導線、現在地、スクロールで表示
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-
-    // ヒーローのボタンが画面から外れたら、下にダウンロード導線を自動で出す
-    const dockObserver = new IntersectionObserver((entries) => {
-      entries.forEach((e) => setDockShown(!e.isIntersecting && e.boundingClientRect.top < 0));
+    // 端末を判定して、その端末のストアを先頭＆強調に
+    const ua = navigator.userAgent;
+    const device: Store | "" = /Android/.test(ua)
+      ? "android"
+      : /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+        ? "ios"
+        : "";
+    const mine = device || "ios";
+    const heroDl = $(".hero-dl");
+    heroDl.querySelectorAll<HTMLElement>(".store-btn").forEach((b) => {
+      b.classList.add(b.dataset.store === mine ? "primary" : "secondary");
+      if (b.dataset.store === mine) heroDl.prepend(b);
     });
-    if (heroDlRef.current) dockObserver.observe(heroDlRef.current);
-
-    const sectionObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) setActive(e.target.id);
-        });
-      },
-      { rootMargin: "-45% 0px -45% 0px" },
-    );
-    SECTIONS.forEach(({ id }) => {
-      const el = document.getElementById(id);
-      if (el) sectionObserver.observe(el);
+    root.querySelectorAll<HTMLElement>(".dl-card").forEach((c) => {
+      if (device && c.dataset.store === device) {
+        c.classList.add("is-mine");
+        c.parentNode!.prepend(c);
+      }
     });
+    // 下の追従ボタン：スマホなら直接ストアへ、PCならQRのあるダウンロード欄へ
+    const deviceUrl = device ? STORES.find((s) => s.store === device)?.url : undefined;
+    if (deviceUrl) {
+      const dock = $<HTMLAnchorElement>(".dock-dl");
+      dock.href = deviceUrl;
+      dock.target = "_blank";
+      dock.rel = "noopener noreferrer";
+    }
 
-    const revealObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("is-visible");
-            revealObserver.unobserve(e.target);
+    // ローディング → 表示開始 → タイトルを日本語入力風に表示 → 説明文とボタンを表示
+    cleanups.push(
+      runLoader(loaderRef.current, reduce, timers, () => {
+        root.classList.add("is-ready");
+        const finish = () => root.classList.add("is-typed");
+        if (reduce) finish();
+        else timers.timeout(() => imeType($("h1"), TITLE, timers, finish), 700);
+      }),
+    );
+
+    // ヘッダーの背景
+    const hd = $("header");
+    const onHeader = () => hd.classList.toggle("is-scrolled", window.scrollY > 10);
+    window.addEventListener("scroll", onHeader, { passive: true });
+    cleanups.push(() => window.removeEventListener("scroll", onHeader));
+
+    const dockEl = $(".dock");
+    const links = root.querySelectorAll<HTMLElement>(".pills a");
+    const ind = $(".indicator");
+    const setActive = (id: string) => {
+      links.forEach((a) => {
+        const on = a.dataset.sec === id;
+        a.classList.toggle("is-active", on);
+        if (on) {
+          ind.style.width = a.offsetWidth + "px";
+          ind.style.transform = `translateX(${a.offsetLeft}px)`;
+        }
+      });
+    };
+
+    if ("IntersectionObserver" in window) {
+      // ヒーローのボタンが画面から外れたら、下にダウンロード導線を自動で出す
+      const dockIO = new IntersectionObserver((es) =>
+        es.forEach((e) => dockEl.classList.toggle("is-shown", !e.isIntersecting && e.boundingClientRect.top < 0)),
+      );
+      dockIO.observe(heroDl);
+
+      const secIO = new IntersectionObserver(
+        (es) => es.forEach((e) => e.isIntersecting && setActive(e.target.id)),
+        { rootMargin: "-45% 0px -45% 0px" },
+      );
+      SECTIONS.forEach(({ id }) => secIO.observe($(`#${id}`)));
+
+      const rv = new IntersectionObserver(
+        (es) =>
+          es.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("is-visible");
+              rv.unobserve(e.target);
+            }
+          }),
+        { threshold: 0.2 },
+      );
+      root.querySelectorAll(".reveal").forEach((el) => rv.observe(el));
+      cleanups.push(() => {
+        dockIO.disconnect();
+        secIO.disconnect();
+        rv.disconnect();
+      });
+    } else {
+      dockEl.classList.add("is-shown");
+      root.querySelectorAll(".reveal").forEach((el) => el.classList.add("is-visible"));
+    }
+    setActive("top");
+
+    // アプリ画面を数秒ごとに切り替え
+    cleanups.push(startSlides(root, reduce));
+
+    // 画面ギャラリー：縦スクロール量に合わせて横に動かす
+    if (!reduce) {
+      const sec = $("#gallery");
+      const track = $(".g-track");
+      const bar = $(".g-bar i");
+      const now = $(".g-now");
+      const cards = track.querySelectorAll<HTMLElement>(".hcard");
+      let dist = 0;
+      const update = () => {
+        const top = sec.getBoundingClientRect().top;
+        const p = dist ? Math.min(1, Math.max(0, -top / dist)) : 0;
+        track.style.transform = `translateX(${-p * dist}px)`;
+        bar.style.transform = `scaleX(${p})`;
+        const mid = window.innerWidth / 2;
+        let best = 0;
+        let bd = 1e9;
+        cards.forEach((c, i) => {
+          const r = c.getBoundingClientRect();
+          const d = Math.abs(r.left + r.width / 2 - mid);
+          if (d < bd) {
+            bd = d;
+            best = i;
           }
         });
-      },
-      { threshold: 0.2 },
-    );
-    document.querySelectorAll(".ksp .reveal").forEach((el) => revealObserver.observe(el));
+        cards.forEach((c, i) => c.classList.toggle("is-center", i === best));
+        now.textContent = pad2(best + 1);
+      };
+      const size = () => {
+        dist = Math.max(0, track.scrollWidth - window.innerWidth);
+        sec.style.height = window.innerHeight + dist + "px";
+        update();
+      };
+      window.addEventListener("scroll", update, { passive: true });
+      window.addEventListener("resize", size);
+      window.addEventListener("load", size);
+      size();
+      cleanups.push(() => {
+        window.removeEventListener("scroll", update);
+        window.removeEventListener("resize", size);
+        window.removeEventListener("load", size);
+      });
+    }
 
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      dockObserver.disconnect();
-      sectionObserver.disconnect();
-      revealObserver.disconnect();
+      timers.clear();
+      cleanups.forEach((fn) => fn());
     };
   }, []);
 
-  // 下のナビの現在地インジケーターを、選択中のリンクの位置・幅に合わせる
-  useEffect(() => {
-    const link = pillsRef.current?.querySelector<HTMLAnchorElement>(`a[data-sec="${active}"]`);
-    const ind = indicatorRef.current;
-    if (!link || !ind) return;
-    ind.style.width = `${link.offsetWidth}px`;
-    ind.style.transform = `translateX(${link.offsetLeft}px)`;
-  }, [active]);
-
-  // 下の追従ボタン：スマホなら直接ストアへ、PCならQRのあるダウンロード欄へ
-  const deviceStoreUrl = STORES.find((s) => s.store === device)?.url;
-
-  const rootClass = ["ksp", ready && "is-ready", typed && "is-typed"].filter(Boolean).join(" ");
-
   return (
-    <div className={rootClass}>
-      <div className={`loader${loaded ? " is-done" : ""}`} aria-hidden="true">
-        <span className="loader-logo">TOIMAN</span>
-      </div>
+    <div className="ksp" ref={rootRef}>
+      <Loader ref={loaderRef} />
 
-      <header className={`ksp-header${scrolled ? " is-scrolled" : ""}`}>
+      <header>
         <div className="wrap">
           <Link className="logo" href="/">
             {siteConfig.siteName}
@@ -210,93 +297,119 @@ export default function KenkouStationView() {
                   <circle className="heart-dot d1" cx="44" cy="56" r="7.5" />
                   <circle className="heart-dot d2" cx="59" cy="58" r="4.2" />
                 </svg>
-                <Image className="icon-img" src={APP_ICON} alt="" width={104} height={104} />
               </div>
-              {typedCount === null ? (
-                <h1>{app.name}</h1>
-              ) : (
-                <h1 aria-label={app.name}>
-                  <span aria-hidden="true">{titleChars.slice(0, typedCount).join("")}</span>
-                  <span
-                    className={`caret${typedCount < titleChars.length ? " is-typing" : ""}`}
-                    aria-hidden="true"
-                  ></span>
-                </h1>
-              )}
+              <h1>{app.name}</h1>
               <p className="lead">{app.description}</p>
-              {(app.appStoreUrl || app.googlePlayUrl) && (
-                <div className="hero-dl" ref={heroDlRef}>
-                  {STORES.filter((s) => s.url).map((s) => (
-                    <a
-                      key={s.store}
-                      className={`store-btn ${s.store === mine ? "primary is-first" : "secondary"}`}
-                      href={s.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {s.name}
-                      {s.sub}
-                      <span className="arr" aria-hidden="true">
-                        →
-                      </span>
-                    </a>
-                  ))}
-                </div>
-              )}
+              <div className="hero-dl">
+                {STORES.filter((s) => s.url).map((s) => (
+                  <a
+                    key={s.store}
+                    className="store-btn"
+                    data-store={s.store}
+                    href={s.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${s.name}${s.sub}`}
+                  >
+                    <span className="shine-clip" aria-hidden="true"></span>
+                    <span className="si" aria-hidden="true">
+                      <DownloadIcon />
+                    </span>
+                    <span className="st" aria-hidden="true">
+                      <b>{s.name}</b>
+                      <small>{s.sub}</small>
+                    </span>
+                    <span className="arr" aria-hidden="true">
+                      →
+                    </span>
+                  </a>
+                ))}
+              </div>
             </div>
 
             <div className="hero-visual" aria-hidden="true">
               <div className="phone">
                 <div className="screen">
-                  <div className="ph-top">
-                    <span className="ph-tile">
-                      <svg width="22" height="22" viewBox="0 0 100 100" fill="none">
-                        <path d={HEART_PATH} stroke="#f5f0d8" strokeWidth="9" strokeLinejoin="round" />
-                        <circle cx="44" cy="56" r="9" fill="#f5f0d8" />
-                        <circle cx="60" cy="58" r="5" fill="#f5f0d8" />
-                      </svg>
-                    </span>
-                    <span className="ph-lines">
-                      <span className="sk d" style={{ width: "70%" }}></span>
-                      <span className="sk" style={{ width: "45%" }}></span>
-                    </span>
-                  </div>
-                  <div className="ph-card ph-chart">
-                    <span className="sk d" style={{ width: "40%", marginBottom: 8 }}></span>
-                    <svg viewBox="0 0 200 86" preserveAspectRatio="none">
-                      <defs>
-                        <linearGradient id="ksp-cf" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0" stopColor="#86b9a8" stopOpacity=".45" />
-                          <stop offset="1" stopColor="#86b9a8" stopOpacity="0" />
-                        </linearGradient>
-                      </defs>
-                      <path
-                        className="chart-area"
-                        fill="url(#ksp-cf)"
-                        d="M4 60 L34 52 L64 58 L94 40 L124 46 L154 28 L184 34 L184 86 L4 86 Z"
-                      />
-                      <path
-                        className="chart-line"
-                        pathLength={1}
-                        d="M4 60 L34 52 L64 58 L94 40 L124 46 L154 28 L184 34"
-                      />
-                    </svg>
-                  </div>
-                  <div className="ph-stats">
-                    {["#dfe9e3", "#f3e1cf", "#e4e0f0"].map((color) => (
-                      <div key={color} className="ph-stat">
-                        <i style={{ background: color }}></i>
-                        <span className="sk d"></span>
-                        <span className="sk" style={{ width: "60%" }}></span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="ph-card ph-bars">
-                    {["40%", "62%", "48%", "75%", "92%", "58%", "70%"].map((h, i) => (
-                      <span key={i} style={{ "--h": h, "--i": i } as React.CSSProperties}></span>
-                    ))}
-                  </div>
+                  {HERO_SLIDES.map((s, i) => (
+                    <div key={s.src} className={`slide${i === 0 ? " is-on" : ""}`} style={{ background: s.bg }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={s.src} alt="" />
+                    </div>
+                  ))}
                 </div>
+              </div>
+              <div className="slide-dots">
+                {HERO_SLIDES.map((s, i) => (
+                  <i key={s.src} className={i === 0 ? "is-on" : undefined}></i>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="features" id="features">
+          <div className="wrap">
+            <p className="hook reveal">
+              {HOOK.map((t) => (
+                <span key={t}>{t}</span>
+              ))}
+            </p>
+            <div className="feat-list">
+              {FEATURES.map((f, i) => (
+                <article key={f.title} className={`feat${i % 2 ? " rev" : ""}`}>
+                  <div className="feat-text reveal">
+                    <span className="feat-num" aria-hidden="true">
+                      {pad2(i + 1)}
+                    </span>
+                    <h3>
+                      <span className="sr">{i + 1}. </span>
+                      {f.title}
+                    </h3>
+                    <p>{f.text}</p>
+                  </div>
+                  <div className="feat-media reveal d1">
+                    <div className="feat-blob" aria-hidden="true"></div>
+                    <div className="fphone">
+                      <div className="fscreen" style={{ background: f.bg }}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={f.img} alt={f.alt} loading="lazy" />
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="gallery" id="gallery">
+          <div className="g-sticky">
+            <div className="wrap g-head">
+              <div className="section-label" aria-hidden="true">
+                <i></i>SCREENS
+              </div>
+              <div className="g-count" aria-hidden="true">
+                <b className="g-now">01</b> / {pad2(GALLERY.length)}
+              </div>
+            </div>
+            <div className="g-track">
+              {GALLERY.map((g, i) => (
+                <figure
+                  key={g.src}
+                  className="hcard"
+                  style={{ "--r": g.r, "--y": g.y, "--ar": g.ar } as React.CSSProperties}
+                >
+                  <span className="hnum" aria-hidden="true">
+                    {pad2(i + 1)}
+                  </span>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={g.src} alt={g.alt} />
+                </figure>
+              ))}
+            </div>
+            <div className="wrap">
+              <div className="g-bar" aria-hidden="true">
+                <i></i>
               </div>
             </div>
           </div>
@@ -314,7 +427,8 @@ export default function KenkouStationView() {
                 {STORES.filter((s) => s.url).map((s, i) => (
                   <a
                     key={s.store}
-                    className={`dl-card reveal d${i + 1}${s.store === device ? " is-mine is-first" : ""}`}
+                    className={`dl-card reveal d${i + 1}`}
+                    data-store={s.store}
                     href={s.url}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -361,24 +475,24 @@ export default function KenkouStationView() {
       </main>
 
       {/* スクロールすると自動で出てくる：ページ内ナビ＋ダウンロード */}
-      <nav className={`dock${dockShown ? " is-shown" : ""}`} aria-label="ページ内ナビとダウンロード">
-        <div className="pills" ref={pillsRef}>
-          <span className="indicator" ref={indicatorRef}></span>
+      <nav className="dock" aria-label="ページ内ナビとダウンロード">
+        <div className="pills">
+          <span className="indicator"></span>
           {SECTIONS.map(({ id, label }) => (
-            <a key={id} href={`#${id}`} data-sec={id} className={active === id ? "is-active" : undefined}>
+            <a key={id} href={`#${id}`} data-sec={id}>
               {label}
             </a>
           ))}
         </div>
-        <a
-          className="dock-dl"
-          href={deviceStoreUrl ?? "#download"}
-          {...(deviceStoreUrl ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-        >
+        <a className="dock-dl" href="#download">
           <span className="ph-tile" aria-hidden="true">
-            <Image src={APP_ICON} alt="" width={32} height={32} />
+            <svg width="18" height="18" viewBox="0 0 100 100" fill="none">
+              <path d={HEART_PATH} stroke="#f5f0d8" strokeWidth="10" strokeLinejoin="round" />
+              <circle cx="44" cy="56" r="9" fill="#f5f0d8" />
+              <circle cx="60" cy="58" r="5" fill="#f5f0d8" />
+            </svg>
           </span>
-          <span>ダウンロード</span>
+          <span className="dock-label">ダウンロード</span>
         </a>
       </nav>
     </div>

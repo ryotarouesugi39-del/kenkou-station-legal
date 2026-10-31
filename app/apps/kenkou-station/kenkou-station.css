@@ -1,10 +1,10 @@
 /*
- * 健康ステーションの概要ページ専用のスタイル（page.tsx から読み込み）。
+ * 健康ステーションの概要ページ専用のスタイル（KenkouStationView.tsx から読み込み）。デザイン案（kenkou-station.html）をそのまま移したもの。
  * 利用規約・プライバシーポリシーなど他ページへ影響しないよう、すべて .ksp（このページのルート要素）配下に限定している。
  * フッターは全ページ共通の app/layout.tsx にあるため、このページ表示中だけ body:has(.ksp) > footer で見た目を合わせる。
  * keyframes 名はトップページ（app/home.css）と衝突しないよう ksp- を付けている。
  */
-body:has(.ksp) {
+  body:has(.ksp) {
     --paper: #efe6d6;
     --ink: #2b2925;
     --muted: #6d665c;
@@ -29,22 +29,42 @@ body:has(.ksp) {
   .ksp a { color: inherit; text-decoration: none; }
   .ksp a:focus-visible, .ksp button:focus-visible { outline: 3px solid var(--green); outline-offset: 4px; border-radius: 10px; }
   .ksp .wrap { position: relative; width: 100%; max-width: 1080px; margin: 0 auto; padding: 0 28px; }
-
-  /* ローディング（短め） */
-  .ksp .loader { position: fixed; inset: 0; z-index: 100; background: var(--green-deep); display: grid; place-items: center; transition: opacity .6s, visibility .6s; }
-  .ksp .loader.is-done { opacity: 0; visibility: hidden; }
-  .ksp .loader-logo { color: var(--cream); font-weight: 700; letter-spacing: .4em; opacity: 0; animation: ksp-fadeIn .6s .1s forwards; }
+  /* ローディング（ハートを描く→TOIMANが下から→幕が上がる） */
+  .ksp .loader { position: fixed; inset: 0; z-index: 100; pointer-events: none; }
+  .ksp .loader.is-done { display: none; }
+  .ksp .ld-panel { position: absolute; inset: 0; transition: transform .9s cubic-bezier(.77,0,.18,1); }
+  .ksp .ld-panel.dark { background: var(--green-deep); pointer-events: auto; }
+  .ksp .loader.is-leaving .ld-panel { transform: translateY(-101%); }
+  .ksp .ld-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; transition: opacity .4s, transform .6s cubic-bezier(.77,0,.18,1); }
+  .ksp .loader.is-leaving .ld-center { opacity: 0; transform: translateY(-40px); }
+  .ksp .ld-mark { width: 64px; height: 64px; overflow: visible; }
+  .ksp .ld-heart { fill: none; stroke: var(--green-2); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: ksp-ldDraw 1s .15s cubic-bezier(.45,0,.2,1) forwards; }
+  .ksp .ld-dot { fill: var(--cream); transform-box: fill-box; transform-origin: center; transform: scale(0); }
+  .ksp .ld-dot.a { animation: ksp-ldPop .4s .95s cubic-bezier(.3,1.6,.5,1) forwards; }
+  .ksp .ld-dot.b { animation: ksp-ldPop .4s 1.08s cubic-bezier(.3,1.6,.5,1) forwards; }
+  .ksp .ld-word { display: flex; gap: .42em; color: var(--cream); font-weight: 700; font-size: 1.15rem; letter-spacing: 0; }
+  .ksp .ld-word span { display: inline-block; overflow: hidden; line-height: 1.2; }
+  .ksp .ld-word span i { display: inline-block; font-style: normal; transform: translateY(110%); animation: ksp-ldRise .7s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: calc(.45s + var(--n) * 70ms); }
+  .ksp .loader.is-quick .ld-heart { animation-duration: .45s; animation-delay: 0s; }
+  .ksp .loader.is-quick .ld-dot.a, .ksp .loader.is-quick .ld-dot.b { animation-delay: .35s; }
+  .ksp .loader.is-quick .ld-word span i { animation-delay: calc(.1s + var(--n) * 35ms); }
+  @keyframes ksp-ldDraw { to { stroke-dashoffset: 0; } }
+  @keyframes ksp-ldPop { to { transform: scale(1); } }
+  @keyframes ksp-ldRise { to { transform: none; } }
+  /* 日本語入力風タイピング（ローマ字→かな→変換） */
+  .ksp .ime-done, .ksp .ghost { white-space: pre-wrap; }
+  .ksp .ime { text-decoration: underline dashed 2px; text-decoration-color: var(--green); text-underline-offset: .2em; }
+  .ksp .ime.is-roma { color: var(--green); }
+  .ksp .ime.is-conv { text-decoration: underline solid 3px; text-decoration-color: var(--green); background: rgba(134,185,168,.28); border-radius: 4px; }
   @keyframes ksp-fadeIn { to { opacity: 1; } }
-
   /* ヘッダー */
-  .ksp .ksp-header { position: fixed; top: 0; left: 0; right: 0; z-index: 30; transition: background .3s; }
-  .ksp .ksp-header.is-scrolled { background: rgba(239,230,214,.75); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
-  .ksp .ksp-header .wrap { display: flex; align-items: center; justify-content: space-between; min-height: 72px; gap: 16px; }
+  .ksp header { position: fixed; top: 0; left: 0; right: 0; z-index: 30; transition: background .3s; }
+  .ksp header.is-scrolled { background: rgba(239,230,214,.75); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+  .ksp header .wrap { display: flex; align-items: center; justify-content: space-between; min-height: 72px; gap: 16px; }
   .ksp .logo { font-weight: 700; font-size: 1.15rem; letter-spacing: .1em; white-space: nowrap; }
   .ksp .back { display: inline-flex; align-items: center; gap: 6px; font-size: .95rem; font-weight: 600; white-space: nowrap; position: relative; padding: 6px 2px; }
   .ksp .back::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--green); transform: scaleX(0); transform-origin: right; transition: transform .35s ease; }
   .ksp .back:hover::after { transform: scaleX(1); transform-origin: left; }
-
   /* ヒーロー */
   .ksp .hero { position: relative; z-index: 1; min-height: 100svh; display: flex; align-items: center; overflow: hidden; }
   .ksp .band {
@@ -56,7 +76,6 @@ body:has(.ksp) {
   .ksp.is-ready .band { transform: none; opacity: 1; }
   .ksp .hero .wrap { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, .7fr); align-items: center; gap: 40px; padding-top: 104px; padding-bottom: 96px; }
   .ksp .hero-text { min-width: 0; padding-right: 24px; }
-
   /* アプリアイコン（動画の演出） */
   .ksp .icon-tile {
     position: relative; width: 104px; height: 104px; border-radius: 26px; margin-bottom: 28px;
@@ -78,14 +97,12 @@ body:has(.ksp) {
   @keyframes ksp-tileGlow { to { box-shadow: 0 18px 50px -10px rgba(79,133,116,.55); } }
   @keyframes ksp-draw { to { stroke-dashoffset: 0; } }
   @keyframes ksp-pop { to { transform: scale(1); } }
-
   .ksp h1 { font-size: clamp(2.3rem, 5vw, 3.8rem); font-weight: 700; line-height: 1.35; letter-spacing: .02em; min-height: 1.35em; }
   .ksp .caret { display: inline-block; width: 3px; height: .95em; margin-left: 6px; vertical-align: -0.1em; background: var(--green); border-radius: 2px; animation: ksp-blink 1s steps(1) infinite; }
   .ksp .caret.is-typing { animation: none; }
   @keyframes ksp-blink { 50% { opacity: 0; } }
   .ksp .lead { font-size: clamp(1.1rem, 2vw, 1.35rem); font-weight: 500; color: var(--muted); margin-top: 14px; opacity: 0; transform: translateY(12px); transition: opacity .9s, transform .9s var(--ease); }
   .ksp.is-typed .lead { opacity: 1; transform: none; }
-
   /* ヒーローのダウンロードボタン */
   .ksp .hero-dl { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; opacity: 0; transform: translateY(14px); transition: opacity .9s .25s, transform .9s .25s var(--ease); }
   .ksp.is-typed .hero-dl { opacity: 1; transform: none; }
@@ -101,7 +118,6 @@ body:has(.ksp) {
   .ksp .store-btn.secondary:hover { background: var(--ink); color: var(--paper); transform: translateY(-2px); }
   .ksp .store-btn .arr { transition: transform .3s; }
   .ksp .store-btn:hover .arr { transform: translateX(4px); }
-
   /* スマホのイラスト（トップと共通） */
   .ksp .hero-visual { position: relative; justify-self: center; width: 250px; aspect-ratio: 1 / 2; opacity: 0; transform: translateY(40px) rotate(4deg); transition: opacity 1.2s .4s, transform 1.4s .4s var(--ease); }
   .ksp.is-ready .hero-visual { opacity: 1; transform: rotate(4deg); }
@@ -128,15 +144,14 @@ body:has(.ksp) {
   .ksp .ph-bars span:nth-child(5) { background: var(--green-2); }
   .ksp.is-ready .ph-bars span { animation: ksp-grow .8s var(--ease) forwards; animation-delay: calc(1.8s + var(--i) * 80ms); }
   @keyframes ksp-grow { to { transform: scaleY(1); } }
-
   /* セクション共通 */
   .ksp .reveal { opacity: 0; transform: translateY(36px); transition: opacity 1s var(--ease), transform 1s var(--ease); }
   .ksp .reveal.is-visible { opacity: 1; transform: none; }
-  .ksp .reveal.d1 { transition-delay: .12s; } .ksp .reveal.d2 { transition-delay: .24s; }
+  .ksp .reveal.d1 { transition-delay: .12s; }
+  .ksp .reveal.d2 { transition-delay: .24s; }
   .ksp .section-label { display: flex; align-items: center; gap: 14px; font-size: .78rem; letter-spacing: .3em; color: var(--muted); margin-bottom: 18px; }
   .ksp .section-label i { display: block; width: 32px; height: 1px; background: currentColor; }
   .ksp h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 700; line-height: 1.4; }
-
   /* ダウンロード（暗いセクション） */
   .ksp .download {
     position: relative; z-index: 1; overflow: hidden; color: var(--cream);
@@ -156,14 +171,13 @@ body:has(.ksp) {
   .ksp .dl-card:hover { background: rgba(134,185,168,.16); border-color: rgba(134,185,168,.5); transform: translateY(-4px); }
   .ksp .dl-card.is-mine { border-color: rgba(134,185,168,.6); box-shadow: 0 0 0 1px rgba(134,185,168,.25), 0 20px 50px -20px rgba(120,200,175,.45); }
   .ksp .qr { flex-shrink: 0; width: 112px; height: 112px; padding: 9px; border-radius: 14px; background: var(--cream); color: var(--green-deep); }
-  .ksp .qr svg { display: block; width: 100%; height: 100%; }
+  .ksp .qr svg, .ksp .qr img { display: block; width: 100%; height: 100%; }
   .ksp .dl-body { flex: 1; min-width: 0; }
   .ksp .dl-name { display: block; font-size: 1.3rem; font-weight: 700; line-height: 1.4; }
   .ksp .dl-name > span { display: block; white-space: nowrap; }
   .ksp .dl-name .sub { font-size: .95rem; font-weight: 600; color: rgba(245,240,216,.65); }
   .ksp .dl-go { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; margin-top: 12px; border-radius: 50%; background: var(--cream); color: var(--green-deep); transition: transform .35s var(--ease), background .3s; }
   .ksp .dl-card:hover .dl-go { transform: translateX(6px); background: var(--green-2); }
-
   /* 規約・サポート */
   .ksp .info { position: relative; z-index: 1; padding: 120px 0 140px; }
   .ksp .info-list { list-style: none; margin-top: 40px; border-top: 1px solid var(--line); }
@@ -178,18 +192,16 @@ body:has(.ksp) {
   .ksp .info-list a:hover::before { transform: scaleX(1); }
   .ksp .info-list .arr { flex-shrink: 0; transition: transform .35s var(--ease); }
   .ksp .info-list a:hover .arr { transform: translateX(6px); }
-
-  /* フッター */
+  /* フッター（app/layout.tsx の共通フッターをこのページの見た目に合わせる） */
   body:has(.ksp) > footer {
     position: relative; z-index: 1; max-width: none; border-top: 0;
-    background: #080c0b; color: rgba(245,240,216,.6); font-size: .88rem;
+    background: #080c0b; color: rgba(245,240,216,.6); font-size: .88rem; line-height: 1.9;
     padding: 40px max(28px, calc((100% - 1024px) / 2)) 140px;
     display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
   }
   body:has(.ksp) > footer nav, body:has(.ksp) > footer p { margin: 0; }
   body:has(.ksp) > footer a { text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(245,240,216,.3); }
   body:has(.ksp) > footer a:hover { color: var(--cream); }
-
   /* スクロールで自動で出てくるダウンロード導線 */
   .ksp .dock {
     position: fixed; left: 50%; bottom: 18px; z-index: 40;
@@ -210,7 +222,6 @@ body:has(.ksp) {
   .ksp .dock-dl .ph-tile { width: 32px; height: 32px; border-radius: 9px; }
   .ksp .dock.is-shown .dock-dl { animation: ksp-nudge 2.6s 1.2s ease-in-out 2; }
   @keyframes ksp-nudge { 0%, 70%, 100% { transform: none; } 78% { transform: translateY(-5px); } 86% { transform: none; } 92% { transform: translateY(-2px); } }
-
   @media (max-width: 900px) {
     .ksp .hero .wrap { grid-template-columns: 1fr; gap: 56px; padding-top: 112px; padding-bottom: 110px; }
     .ksp .hero-visual { width: 210px; }
@@ -220,7 +231,7 @@ body:has(.ksp) {
   @media (max-width: 700px) {
     body:has(.ksp) { font-size: 17px; }
     .ksp .wrap { padding: 0 20px; }
-    .ksp .ksp-header .wrap { min-height: 62px; }
+    .ksp header .wrap { min-height: 62px; }
     .ksp .logo { font-size: 1rem; }
     .ksp .back { font-size: .88rem; }
     .ksp .hero-text { padding-right: 0; }
@@ -235,32 +246,136 @@ body:has(.ksp) {
     .ksp .dock-dl { padding-right: 16px; font-size: .82rem; }
   }
   /* スマホではQRを出さずボタンだけ */
-  @media (hover: none) and (pointer: coarse) { .ksp .qr { display: none; } }
+  @media (hover: none) and (pointer: coarse) {
+    .ksp .qr { display: none; }
+  }
   @media (prefers-reduced-motion: reduce) {
     html:has(.ksp) { scroll-behavior: auto; }
     .ksp *, .ksp *::before, .ksp *::after { transition: none !important; animation: none !important; }
     .ksp .reveal, .ksp .lead, .ksp .hero-dl, .ksp .icon-tile, .ksp .hero-visual, .ksp .band { opacity: 1 !important; transform: none !important; }
-    .ksp .icon-tile::before, .ksp .chart-area { opacity: 1; } .ksp .heart-line, .ksp .chart-line { stroke-dashoffset: 0; } .ksp .heart-dot, .ksp .ph-bars span { transform: none; }
+    .ksp .icon-tile::before, .ksp .chart-area { opacity: 1; }
+    .ksp .heart-line, .ksp .chart-line { stroke-dashoffset: 0; }
+    .ksp .heart-dot, .ksp .ph-bars span { transform: none; }
   }
-
-/* 本物のアプリアイコン：ハートを描く演出のあと、実際のアイコン画像に切り替える */
-.ksp .icon-tile .icon-img { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; border-radius: inherit; object-fit: cover; opacity: 0; }
-.ksp.is-ready .icon-tile .icon-img { animation: ksp-fadeIn .6s 2.4s ease-out forwards; }
-.ksp .dock-dl .ph-tile { overflow: hidden; }
-.ksp .dock-dl .ph-tile img { width: 100%; height: 100%; object-fit: cover; }
-.ksp .qr img { display: block; width: 100%; height: 100%; }
-/* 端末に合うストアを先頭に（Android 端末のときだけ並びを入れ替える） */
-.ksp .is-first { order: -1; }
-@media (prefers-reduced-motion: reduce) {
-  .ksp .icon-tile .icon-img { opacity: 1; }
-}
-/* 幅の狭いスマホ（〜360px）でもはみ出さないように */
-@media (max-width: 360px) {
-  .ksp .dl-card { gap: 14px; padding: 18px; }
-  .ksp .qr { width: 84px; height: 84px; padding: 7px; }
-  .ksp .dl-name { font-size: 1.1rem; }
-  .ksp .dl-name .sub { font-size: .85rem; }
-  .ksp .pills a { padding: 9px 9px; font-size: .7rem; letter-spacing: .06em; }
-  .ksp .dock-dl { padding-right: 9px; }
-  .ksp .dock-dl > span:last-child { display: none; }
-}
+  /* 実際のアプリ画面（スライドで切り替え） */
+  .ksp .hero-visual { aspect-ratio: 9 / 19 !important; width: 280px !important; }
+  @media (max-width: 900px) {
+    .ksp .hero-visual { width: 220px !important; }
+  }
+  .ksp .screen { padding: 0 !important; display: block !important; background: #f5f5f5 !important; }
+  .ksp .screen::before { z-index: 3; top: 9px !important; width: 62px !important; height: 16px !important; margin-left: -31px !important; }
+  .ksp .slide { position: absolute; inset: 0; padding-top: 30px; opacity: 0; transform: scale(1.03); transition: opacity .8s ease, transform 1.2s cubic-bezier(.2,.8,.2,1); }
+  .ksp .slide::after { content: ""; position: absolute; left: 0; right: 0; top: 30px; bottom: 0; background: #f5f5f5; z-index: -1; }
+  .ksp .slide.is-on { opacity: 1; transform: none; }
+  .ksp .slide img { display: block; width: 100%; height: auto; background: #f5f5f5; }
+  .ksp .slide-dots { position: absolute; left: 0; right: 0; bottom: -34px; display: flex; justify-content: center; gap: 8px; }
+  .ksp .slide-dots i { width: 7px; height: 7px; border-radius: 50%; background: rgba(43,41,37,.2); transition: width .4s, background .4s; }
+  .ksp .slide-dots i.is-on { width: 22px; border-radius: 4px; background: var(--green); }
+  /* 画面ギャラリー：縦スクロールで横に流れる */
+  .ksp .gallery { position: relative; z-index: 1; height: 300vh; }
+  .ksp .g-sticky { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: 16px; padding-top: 64px; }
+  .ksp .g-head { display: flex; align-items: center; justify-content: space-between; }
+  .ksp .g-head .section-label { margin: 0; }
+  .ksp .g-count { font-size: .85rem; letter-spacing: .15em; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .ksp .g-count b { color: var(--ink); font-size: 1.4rem; }
+  .ksp .g-track { display: flex; align-items: center; gap: clamp(28px, 5vw, 72px); padding: 40px max(28px, calc((100vw - 1080px) / 2 + 28px)); width: max-content; will-change: transform; }
+  .ksp .hcard { position: relative; flex-shrink: 0; width: min(clamp(260px, 32vw, 420px), calc((100svh - 300px) / var(--ar, 1.3))); margin: 0; border-radius: 24px; overflow: visible;
+    transform: translateY(var(--y)) rotate(var(--r)); transition: transform .6s var(--ease); }
+  .ksp .hcard img { display: block; width: 100%; height: auto; border-radius: 24px; background: #f5f5f5;
+    box-shadow: 0 34px 60px -30px rgba(60,45,25,.5), 0 0 0 1px rgba(43,41,37,.06); }
+  .ksp .hcard.is-center { transform: translateY(0) rotate(0) scale(1.04); }
+  .ksp .hnum { position: absolute; top: -46px; left: 4px; font-size: 2.2rem; font-weight: 800; color: transparent; -webkit-text-stroke: 1.2px rgba(43,41,37,.35); letter-spacing: .05em; }
+  .ksp .g-bar { height: 2px; background: var(--line); border-radius: 2px; overflow: hidden; }
+  .ksp .g-bar i { display: block; height: 100%; background: var(--green); transform: scaleX(0); transform-origin: left; }
+  @media (max-width: 700px) {
+    .ksp .hcard { width: min(78vw, calc((100svh - 300px) / var(--ar, 1.3))); }
+    .ksp .dock-dl .dock-label { display: none; }
+    .ksp .dock-dl { padding: 9px; }
+    .ksp .g-track { padding: 50px 10vw; gap: 24px; }
+    .ksp .hnum { font-size: 1.8rem; top: -40px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ksp .gallery { height: auto; }
+    .ksp .g-sticky { position: static; height: auto; padding: 80px 0; }
+    .ksp .g-track { overflow-x: auto; width: auto; }
+    .ksp .hcard { transform: none; }
+  }
+  /* ヒーローのダウンロード（目立たせる） */
+  .ksp .hero-dl { gap: 14px !important; margin-top: 40px !important; }
+  .ksp .store-btn {
+    position: relative; overflow: hidden; isolation: isolate;
+    min-height: 76px !important; padding: 12px 26px 12px 14px !important; gap: 14px !important;
+    border-radius: 22px !important; border: 0 !important; text-align: left;
+    background: #fffaf0 !important; color: var(--ink) !important;
+    box-shadow: 0 0 0 1.5px rgba(43,41,37,.18), 0 14px 30px -18px rgba(60,45,25,.5);
+  }
+  .ksp .store-btn .si { flex-shrink: 0; width: 50px; height: 50px; border-radius: 15px; display: grid; place-items: center; background: var(--green); color: #fff; }
+  .ksp .store-btn .st { display: grid; line-height: 1.25; }
+  .ksp .store-btn .st b { font-size: 1.2rem; letter-spacing: .02em; }
+  .ksp .store-btn .st small { font-size: .82rem; font-weight: 600; opacity: .7; }
+  .ksp .store-btn .arr { margin-left: 6px; font-size: 1.15rem; }
+  .ksp .store-btn.primary { background: var(--green) !important; color: #fff !important; box-shadow: 0 18px 36px -14px rgba(79,133,116,.75); }
+  .ksp .store-btn.primary .si { background: rgba(255,255,255,.18); }
+  .ksp .store-btn.primary .st small { opacity: .85; }
+  .ksp .store-btn.primary::after { content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%; z-index: -1;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent); transform: skewX(-20deg); animation: ksp-shine 3.2s 2.5s ease-in-out infinite; }
+  .ksp .store-btn.primary::before { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 0 0 rgba(79,133,116,.55); animation: ksp-ring 2.4s 2.2s ease-out infinite; z-index: -2; }
+  @keyframes ksp-shine { 0% { left: -60%; } 45%, 100% { left: 130%; } }
+  @keyframes ksp-ring { 0% { box-shadow: 0 0 0 0 rgba(79,133,116,.5); } 100% { box-shadow: 0 0 0 16px rgba(79,133,116,0); } }
+  .ksp .store-btn:hover { transform: translateY(-3px) !important; }
+  .ksp .store-btn.primary:hover { background: #3f7262 !important; }
+  .ksp .store-btn.secondary:hover { background: #fff !important; color: var(--ink) !important; }
+  .ksp .store-btn.primary { overflow: visible; }
+  .ksp .store-btn.primary::after { border-radius: 22px; }
+  .ksp .store-btn.primary .shine-clip { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; z-index: -1; }
+  .ksp .store-btn.primary .shine-clip::after { content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent); transform: skewX(-20deg); animation: ksp-shine 3.2s 2.5s ease-in-out infinite; }
+  .ksp .store-btn.primary::after { display: none; }
+  @media (max-width: 700px) {
+    .ksp .store-btn { justify-content: flex-start !important; }
+    .ksp .store-btn .arr { margin-left: auto; }
+  }
+  /* Google Play側も別の色で光らせる */
+  .ksp .store-btn .shine-clip { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; z-index: -1; }
+  .ksp .store-btn.secondary .si { background: #c98b5a; }
+  .ksp .store-btn.secondary { box-shadow: 0 0 0 1.5px rgba(201,139,90,.55), 0 16px 32px -16px rgba(201,139,90,.6) !important; }
+  .ksp .store-btn.secondary .shine-clip::after { content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%;
+    background: linear-gradient(100deg, transparent, rgba(232,170,110,.45), transparent); transform: skewX(-20deg); animation: ksp-shine 3.2s 4.1s ease-in-out infinite; }
+  .ksp .store-btn.secondary::before { content: ""; position: absolute; inset: 0; border-radius: inherit; z-index: -2; animation: ksp-ringAmber 2.4s 3.4s ease-out infinite; }
+  @keyframes ksp-ringAmber { 0% { box-shadow: 0 0 0 0 rgba(201,139,90,.5); } 100% { box-shadow: 0 0 0 16px rgba(201,139,90,0); } }
+  .ksp .store-btn.secondary { overflow: visible; }
+  /* フック＋特徴 */
+  .ksp .features { position: relative; z-index: 1; padding: 140px 0 60px; }
+  .ksp .hook { text-align: center; font-size: clamp(1.7rem, 4.4vw, 3rem); font-weight: 700; line-height: 1.6; letter-spacing: .04em; word-break: auto-phrase; }
+  .ksp .hook span { display: inline-block; }
+  .ksp .features { overflow-x: clip; }
+  .ksp .hook::after { content: ""; display: block; width: 48px; height: 3px; border-radius: 2px; background: var(--green); margin: 32px auto 0; }
+  .ksp .feat-list { margin-top: 110px; display: grid; gap: 140px; }
+  .ksp .feat { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 64px; }
+  .ksp .feat.rev .feat-text { order: 2; }
+  .ksp .feat-text { max-width: 440px; justify-self: center; }
+  .ksp .feat-num { display: block; font-size: 4.2rem; font-weight: 800; line-height: 1; color: transparent; -webkit-text-stroke: 1.5px var(--green); letter-spacing: .04em; margin-bottom: 22px; }
+  .ksp .feat-text h3 { font-size: clamp(1.7rem, 3.2vw, 2.3rem); font-weight: 700; line-height: 1.4; letter-spacing: .04em; }
+  .ksp .feat-text p { margin-top: 18px; font-size: clamp(1.08rem, 1.8vw, 1.25rem); line-height: 2; color: #4a453e; word-break: auto-phrase; }
+  .ksp .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .ksp .feat-media { position: relative; justify-self: center; display: grid; place-items: center; padding: 30px; }
+  .ksp .feat-blob { position: absolute; inset: 8% -6%; border-radius: 46% 54% 52% 48% / 55% 45% 55% 45%; background: radial-gradient(circle at 30% 30%, rgba(134,185,168,.55), rgba(134,185,168,.15) 70%); filter: blur(2px); animation: ksp-blob 12s ease-in-out infinite alternate; }
+  .ksp .feat.rev .feat-blob { background: radial-gradient(circle at 70% 30%, rgba(232,190,150,.55), rgba(232,190,150,.15) 70%); }
+  @keyframes ksp-blob { to { border-radius: 55% 45% 45% 55% / 45% 55% 45% 55%; transform: rotate(8deg) scale(1.04); } }
+  .ksp .fphone { position: relative; width: 250px; aspect-ratio: 9 / 19; border-radius: 38px; padding: 10px; background: #1d1c1a;
+    box-shadow: 0 40px 70px -30px rgba(20,30,25,.55), inset 0 0 0 2px #3a3833; }
+  .ksp .fscreen { position: relative; height: 100%; border-radius: 29px; overflow: hidden; padding-top: 26px; }
+  .ksp .fscreen::before { content: ""; position: absolute; top: 8px; left: 50%; width: 58px; height: 15px; margin-left: -29px; border-radius: 999px; background: #1d1c1a; z-index: 2; }
+  .ksp .fscreen img { display: block; width: 100%; height: auto; }
+  .ksp .feat-media.reveal { transform: translateY(50px) rotate(3deg); }
+  .ksp .feat.rev .feat-media.reveal { transform: translateY(50px) rotate(-3deg); }
+  .ksp .feat-media.reveal.is-visible { transform: none; }
+  @media (max-width: 800px) {
+    .ksp .features { padding: 100px 0 40px; }
+    .ksp .feat-list { margin-top: 70px; gap: 90px; }
+    .ksp .feat { grid-template-columns: 1fr; gap: 28px; }
+    .ksp .feat.rev .feat-text { order: 0; }
+    .ksp .feat-text { justify-self: start; max-width: none; }
+    .ksp .feat-num { font-size: 3.2rem; margin-bottom: 14px; }
+    .ksp .fphone { width: 220px; }
+  }

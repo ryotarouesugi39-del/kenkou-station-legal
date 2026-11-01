@@ -28,6 +28,12 @@ export const siteConfig = {
   /** 問い合わせ先メールアドレス（全アプリ共通） */
   contactEmail: "info@toiman.co.jp",
 
+  /**
+   * TikTokピクセルID（TikTok広告の効果計測。公開情報なのでコードに置いてよい）
+   * 空にすると読み込まない。読み込むのは /apps/kenkou-station/ のみ。
+   */
+  tiktokPixelId: "DBJIQPJC77U24SKT7S6G",
+
   /** サイトの本番ドメイン（https を含めない） */
   domain: "toiman.co.jp",
 

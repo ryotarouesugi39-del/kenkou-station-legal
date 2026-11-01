@@ -211,7 +211,37 @@ export default function PrivacyPolicyPage() {
         </p>
       </Section>
 
-      <Section title="第11条（お問い合わせ窓口）">
+      <Section title="第11条（紹介ページでの広告の効果計測）">
+        <ol className="list-decimal space-y-3 pl-6">
+          <li>
+            当社は、TikTok広告の効果を測るため、本サービスの紹介ページ（
+            <Link href={`/apps/${app.slug}`} className="text-blue-600 hover:underline">
+              {siteConfig.domain}/apps/{app.slug}/
+            </Link>
+            ）に、TikTokが提供する計測ツール（TikTokピクセル）を設置しています。アプリ本体には設置していません。
+          </li>
+          <li>
+            紹介ページを表示したときと、App Store・Google Playへのボタンを押したときに、ページのURL、閲覧日時、IPアドレス、ブラウザや端末の種類、Cookieの識別子などの情報が、TikTokを運営する事業者に送信されます。アプリ内の健康記録、アカウント情報、氏名・メールアドレス等を送信することはありません。
+          </li>
+          <li>
+            送信された情報は、TikTokを運営する事業者により、日本国外のサーバーで取り扱われる場合があります。TikTokでの情報の取扱いは、TikTokのプライバシーポリシー（
+            <a
+              href="https://www.tiktok.com/legal/privacy-policy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline"
+            >
+              https://www.tiktok.com/legal/privacy-policy
+            </a>
+            ）をご確認ください。
+          </li>
+          <li>
+            Cookieは、ブラウザの設定で削除・拒否することができます。また、TikTokアプリの設定から、広告のパーソナライズを制限することができます。
+          </li>
+        </ol>
+      </Section>
+
+      <Section title="第12条（お問い合わせ窓口）">
         <p>
           本ポリシーに関するお問い合わせは、下記の窓口までお願いいたします。
         </p>

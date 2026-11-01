@@ -9,6 +9,7 @@ import { siteConfig } from "@/config/site";
 import { getApp } from "@/config/apps";
 import Loader from "../../_components/Loader";
 import { HEART_PATH, Timers, imeType, runLoader, startSlides, type ImeSegment } from "@/lib/intro";
+import { trackStoreClick } from "@/lib/tiktok";
 import "./kenkou-station.css";
 
 const app = getApp("kenkou-station")!;
@@ -350,6 +351,7 @@ export default function KenkouStationView() {
                     href={s.url}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackStoreClick(s.store)}
                     aria-label={`${s.name}${s.sub}`}
                   >
                     <span className="shine-clip" aria-hidden="true"></span>
@@ -485,6 +487,7 @@ export default function KenkouStationView() {
                     href={s.url}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackStoreClick(s.store)}
                   >
                     <span className="qr">
                       {/* eslint-disable-next-line @next/next/no-img-element */}

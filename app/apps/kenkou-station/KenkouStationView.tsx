@@ -169,7 +169,7 @@ export default function KenkouStationView() {
         root.classList.add("is-ready");
         const finish = () => root.classList.add("is-typed");
         if (skipIntro) finish();
-        else timers.timeout(() => imeType($("h1"), TITLE, timers, finish), 700);
+        else timers.timeout(() => imeType($(".app-name"), TITLE, timers, finish), 700);
       }),
     );
 
@@ -341,15 +341,25 @@ export default function KenkouStationView() {
           <div className="band" aria-hidden="true"></div>
           <div className="wrap">
             <div className="hero-text">
-              <div className="icon-tile" aria-hidden="true">
-                <svg viewBox="0 0 100 100">
-                  <path className="heart-line" pathLength={1} d={HEART_PATH} />
-                  <circle className="heart-dot d1" cx="44" cy="56" r="7.5" />
-                  <circle className="heart-dot d2" cx="59" cy="58" r="4.2" />
-                </svg>
+              {/* 最初の画面だけで「誰向けか・何が困りごとか・何のアプリか」が分かり、そのままストアへ進めるようにする */}
+              <p className="callout">離れて暮らす親が心配な方へ</p>
+              <h1 className="hero-hook">
+                親の<em>「大丈夫」</em>、<br />
+                本当に大丈夫？
+              </h1>
+              <div className="app-row">
+                <div className="icon-tile" aria-hidden="true">
+                  <svg viewBox="0 0 100 100">
+                    <path className="heart-line" pathLength={1} d={HEART_PATH} />
+                    <circle className="heart-dot d1" cx="44" cy="56" r="7.5" />
+                    <circle className="heart-dot d2" cx="59" cy="58" r="4.2" />
+                  </svg>
+                </div>
+                <div className="app-id">
+                  <p className="app-name">{app.name}</p>
+                  <p className="lead">{app.description}</p>
+                </div>
               </div>
-              <h1>{app.name}</h1>
-              <p className="lead">{app.description}</p>
               <div className="hero-dl">
                 {STORES.filter((s) => s.url).map((s) => (
                   <a

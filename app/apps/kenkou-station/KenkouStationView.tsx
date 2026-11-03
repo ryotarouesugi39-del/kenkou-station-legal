@@ -124,6 +124,10 @@ export default function KenkouStationView() {
     if (!root) return;
     const $ = <T extends HTMLElement = HTMLElement>(sel: string) => root.querySelector(sel) as T;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // 広告（utm_source付き）から来た人は待たずに離脱しやすいので、ローディングとタイトルのタイピングを飛ばして
+    // ストアのボタンをすぐ出す（演出はそれ以外の訪問では今まで通り）
+    const fromAd = new URLSearchParams(window.location.search).has("utm_source");
+    const skipIntro = reduce || fromAd;
     const timers = new Timers();
     const cleanups: (() => void)[] = [];
 
@@ -157,10 +161,10 @@ export default function KenkouStationView() {
 
     // ローディング → 表示開始 → タイトルを日本語入力風に表示 → 説明文とボタンを表示
     cleanups.push(
-      runLoader(loaderRef.current, reduce, timers, () => {
+      runLoader(loaderRef.current, skipIntro, timers, () => {
         root.classList.add("is-ready");
         const finish = () => root.classList.add("is-typed");
-        if (reduce) finish();
+        if (skipIntro) finish();
         else timers.timeout(() => imeType($("h1"), TITLE, timers, finish), 700);
       }),
     );

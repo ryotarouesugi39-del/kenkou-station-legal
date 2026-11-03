@@ -157,6 +157,10 @@ export default function KenkouStationView() {
       dock.href = deviceUrl;
       dock.target = "_blank";
       dock.rel = "noopener noreferrer";
+      // スマホでは下の追従ボタンもストアへ直接飛ぶので、ストアボタンのクリックとして数える
+      const onDock = () => trackStoreClick(device as Store);
+      dock.addEventListener("click", onDock);
+      cleanups.push(() => dock.removeEventListener("click", onDock));
     }
 
     // ローディング → 表示開始 → タイトルを日本語入力風に表示 → 説明文とボタンを表示

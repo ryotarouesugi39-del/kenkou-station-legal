@@ -429,3 +429,58 @@
     @keyframes ksp-slide-x { from { transform: translate3d(0,0,0); } to { transform: translate3d(calc(100vw - 100%),0,0); } }
     @keyframes ksp-bar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
   }
+  /* ヒーロー：呼びかけ＋フック＋アプリ名＋ストアボタンを最初の画面に収める（広告から来た人がスクロールせずに押せるように） */
+  .ksp .callout {
+    display: inline-flex; align-items: center; gap: .6em; margin-bottom: 14px;
+    font-size: clamp(.95rem, 1.6vw, 1.1rem); font-weight: 700; color: var(--green); letter-spacing: .06em;
+    opacity: 0; transform: translateY(10px);
+  }
+  .ksp .callout::before, .ksp .callout::after { content: ""; width: 1.4em; height: 2px; border-radius: 2px; background: currentColor; }
+  .ksp .callout::before { transform: rotate(35deg); }
+  .ksp .callout::after { transform: rotate(-35deg); }
+  .ksp .hero-hook { opacity: 0; transform: translateY(14px); min-height: 0; }
+  .ksp .hero-hook em { font-style: normal; color: var(--green); background: linear-gradient(transparent 68%, rgba(134,185,168,.45) 68%); }
+  .ksp.is-ready .callout { animation: ksp-up .7s .05s var(--ease) forwards; }
+  .ksp.is-ready .hero-hook { animation: ksp-up .8s .15s var(--ease) forwards; }
+  .ksp .app-row { display: flex; align-items: center; gap: 16px; margin-top: 26px; }
+  .ksp .app-row .icon-tile { width: 64px; height: 64px; border-radius: 16px; margin: 0; flex-shrink: 0; }
+  .ksp .app-id { min-width: 0; }
+  .ksp .app-name { font-size: clamp(1.25rem, 2.2vw, 1.6rem); font-weight: 700; line-height: 1.35; letter-spacing: .04em; min-height: 1.35em; }
+  .ksp .app-id .lead { margin-top: 2px; font-size: clamp(.9rem, 1.5vw, 1.05rem); line-height: 1.5; }
+  .ksp .app-name .caret { width: 2px; margin-left: 4px; }
+  @media (max-width: 700px) {
+    /* スマホ：文字の右にアプリ画面を小さく置き、ボタンまで1画面に収める */
+    .ksp .hero { min-height: 0; }
+    .ksp .hero .wrap {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas: "callout callout" "hook hook" "app visual" "dl dl";
+      gap: 0 12px; align-items: center; padding-top: 80px; padding-bottom: 56px;
+    }
+    .ksp .hero-text { display: contents; }
+    .ksp .callout { grid-area: callout; justify-self: start; margin-bottom: 8px; font-size: .9rem; }
+    .ksp .hero-hook { grid-area: hook; font-size: clamp(1.85rem, 8.6vw, 2.3rem); line-height: 1.4; }
+    .ksp .app-row { grid-area: app; flex-direction: column; align-items: flex-start; gap: 10px; margin-top: 18px; }
+    .ksp .app-row .icon-tile { width: 52px; height: 52px; border-radius: 13px; }
+    .ksp .app-name { font-size: 1.2rem; }
+    .ksp .app-id .lead { font-size: .8rem; letter-spacing: .02em; }
+    .ksp .hero .hero-visual { grid-area: visual; width: 112px !important; margin-top: 18px; }
+    .ksp .hero .phone { border-radius: 22px; padding: 6px; }
+    .ksp .hero .screen { border-radius: 17px; }
+    .ksp .hero .screen::before { top: 5px !important; width: 34px !important; height: 9px !important; margin-left: -17px !important; }
+    .ksp .hero .slide { padding-top: 18px; }
+    .ksp .hero .slide::after { top: 18px; }
+    .ksp .hero .slide-dots { display: none; }
+    .ksp .hero .hero-dl { grid-area: dl; margin-top: 24px !important; gap: 10px !important; }
+    .ksp .hero .store-btn { min-height: 66px !important; }
+    .ksp .band { top: 38%; height: 46%; width: 70%; right: -30%; }
+  }
+  @media (max-width: 360px) {
+    .ksp .app-name { font-size: 1rem; }
+    .ksp .app-id .lead { font-size: .7rem; letter-spacing: 0; white-space: nowrap; }
+    .ksp .app-row .icon-tile { width: 44px; height: 44px; border-radius: 11px; }
+    .ksp .hero .hero-visual { width: 92px !important; }
+    .ksp .hero .store-btn { min-height: 58px !important; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ksp .callout, .ksp .hero-hook { opacity: 1 !important; transform: none !important; }
+  }

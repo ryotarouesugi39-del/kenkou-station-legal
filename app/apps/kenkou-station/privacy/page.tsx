@@ -97,6 +97,7 @@ export default function PrivacyPolicyPage() {
           <li>ご家族との記録の共有（見守り）機能の提供のため</li>
           <li>有料プランの契約管理のため</li>
           <li>広告の配信のため</li>
+          <li>広告の効果測定（どの広告からインストール・新規登録があったかの把握）のため</li>
           <li>お問い合わせへの対応、重要なお知らせの通知のため</li>
         </ul>
       </Section>
@@ -113,6 +114,7 @@ export default function PrivacyPolicyPage() {
             Groq, Inc.（AIによる写真の解析、AIチャット、レポート・健康アドバイスの生成）
           </li>
           <li>Google AdMob（広告配信）</li>
+          <li>AppsFlyer（広告の効果測定。第12条をご参照ください）</li>
           <li>Open-Meteo（天気情報の取得。送信するのは緯度・経度のみです）</li>
         </ul>
 
@@ -171,6 +173,18 @@ export default function PrivacyPolicyPage() {
           <li>
             Open-Meteoは、スイスの事業者が運営しています。送信するのは緯度・経度のみで、ユーザーを特定する情報は含みません。
           </li>
+          <li>
+            AppsFlyerは、イスラエルの事業者（AppsFlyer Ltd.）が運営しており、情報を日本国外のサーバーで取り扱う場合があります。イスラエルの個人情報の保護に関する制度の概要は、個人情報保護委員会の調査（
+            <a
+              href="https://www.ppc.go.jp/enforcement/infoprovision/laws/offshore_report_israel/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline"
+            >
+              https://www.ppc.go.jp/enforcement/infoprovision/laws/offshore_report_israel/
+            </a>
+            ）をご参照ください。
+          </li>
         </ol>
       </Section>
 
@@ -218,7 +232,7 @@ export default function PrivacyPolicyPage() {
             <Link href={`/apps/${app.slug}`} className="text-blue-600 hover:underline">
               {siteConfig.domain}/apps/{app.slug}/
             </Link>
-            ）に、TikTokが提供する計測ツール（TikTokピクセル）を設置しています。アプリ本体には設置していません。
+            ）に、TikTokが提供する計測ツール（TikTokピクセル）を設置しています。TikTokピクセルはアプリ本体には設置していません（アプリでの効果測定は第12条のとおりです）。
           </li>
           <li>
             紹介ページを表示したときと、App Store・Google Playへのボタンを押したときに、ページのURL、閲覧日時、IPアドレス、ブラウザや端末の種類、Cookieの識別子などの情報が、TikTokを運営する事業者に送信されます。アプリ内の健康記録、アカウント情報、氏名・メールアドレス等を送信することはありません。
@@ -241,7 +255,36 @@ export default function PrivacyPolicyPage() {
         </ol>
       </Section>
 
-      <Section title="第12条（お問い合わせ窓口）">
+      <Section title="第12条（アプリでの広告の効果測定）">
+        <ol className="list-decimal space-y-3 pl-6">
+          <li>
+            当社は、広告（TikTok広告、Apple Adsなど）からのインストール数・新規登録数を測るため、本サービスのアプリに、AppsFlyer Ltd.が提供する計測ツール（AppsFlyer SDK）を組み込んでいます。
+          </li>
+          <li>
+            アプリのインストール・起動時と、新規アカウントの登録が完了したときに、その出来事（イベント）と日時、IPアドレス、端末の種類・OSのバージョン、アプリのバージョン、端末の識別子（iOSのベンダー識別子、Androidの広告IDなど）の情報が、AppsFlyerに送信されます。アプリ内の健康記録、アカウント情報、氏名・電話番号・メールアドレス等を送信することはありません。
+          </li>
+          <li>
+            iOSでは、トラッキングの許可を求める画面を表示しておらず、広告識別子（IDFA）は取得しません。iOSのインストール数は、Appleが提供する仕組み（SKAdNetwork）により、個人を特定しない形で集計されます。
+          </li>
+          <li>
+            AppsFlyerは、インストール・新規登録がどの広告から来たかを判定し、その結果を、広告を配信した事業者（TikTokを運営する事業者、Appleなど）に提供します。AppsFlyerでの情報の取扱いは、AppsFlyerのプライバシーポリシー（
+            <a
+              href="https://www.appsflyer.com/legal/privacy-policy/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline"
+            >
+              https://www.appsflyer.com/legal/privacy-policy/
+            </a>
+            ）をご確認ください。
+          </li>
+          <li>
+            Androidでは、端末の設定から広告IDを削除・リセットすることができます。
+          </li>
+        </ol>
+      </Section>
+
+      <Section title="第13条（お問い合わせ窓口）">
         <p>
           本ポリシーに関するお問い合わせは、下記の窓口までお願いいたします。
         </p>

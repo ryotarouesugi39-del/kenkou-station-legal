@@ -2,12 +2,18 @@ import Link from "next/link";
 
 export const linkClass = "text-blue-600 hover:underline break-all";
 
-export function Page({ children }: { children: React.ReactNode }) {
+export function Page({
+  children,
+  back = { href: "/ea-creator", label: "EA CREATORトップに戻る" },
+}: {
+  children: React.ReactNode;
+  back?: { href: string; label: string };
+}) {
   return (
     <main className="mx-auto max-w-3xl px-6 py-16 text-slate-800">
       <p className="mb-8">
-        <Link href="/" className="text-sm text-slate-500 hover:underline">
-          ← トップに戻る
+        <Link href={back.href} className="text-sm text-slate-500 hover:underline">
+          ← {back.label}
         </Link>
       </p>
       {children}

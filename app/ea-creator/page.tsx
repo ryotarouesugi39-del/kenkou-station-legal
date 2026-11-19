@@ -15,7 +15,7 @@ export default function EaCreatorPage() {
   return (
     <Page back={{ href: "/", label: "トップに戻る" }}>
       <h1 className="mb-2 text-2xl font-bold">EA CREATOR</h1>
-      <p className="mb-8 text-sm text-slate-500">iOSアプリ・Web版</p>
+      <p className="mb-8 text-sm text-slate-500">iOSアプリ</p>
 
       <p className="mb-8 leading-relaxed">
         EA CREATOR は、条件を選ぶだけで MT4/MT5
@@ -25,17 +25,6 @@ export default function EaCreatorPage() {
       <section className="mb-10 rounded-lg border border-slate-200 p-6">
         <h2 className="mb-3 text-lg font-semibold">使ってみる</h2>
         <ul className="space-y-2 leading-relaxed">
-          <li>
-            Web版：
-            <a
-              href="https://ea-creator.netlify.app"
-              className={linkClass}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              ea-creator.netlify.app
-            </a>
-          </li>
           <li className="text-slate-600">iOSアプリ：App Storeにて近日公開</li>
         </ul>
       </section>

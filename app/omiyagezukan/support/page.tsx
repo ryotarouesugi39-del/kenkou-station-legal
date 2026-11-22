@@ -72,7 +72,18 @@ export default function OmiyagezukanSupportPage() {
       </Section>
 
       <Section title="地図の出典">
-        <p>地図：地球地図日本（国土地理院）を加工して作成</p>
+        <p>
+          地図：「地球地図日本」（国土地理院）
+          <a
+            href="https://www.gsi.go.jp/kankyochiri/gm_jpn.html"
+            className={linkClass}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            https://www.gsi.go.jp/kankyochiri/gm_jpn.html
+          </a>{" "}
+          をもとに加工して作成。地球地図日本 © 国土地理院
+        </p>
       </Section>
 
       <p className="text-sm">

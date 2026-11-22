@@ -176,6 +176,9 @@ export default function Home() {
             <Link className="nav-link" href="/ea-creator">
               EA CREATOR
             </Link>
+            <Link className="nav-link" href="/omiyagezukan">
+              お土産図鑑
+            </Link>
           </nav>
         </div>
       </header>
@@ -305,6 +308,22 @@ export default function Home() {
               <span className="card-body">
                 <span className="card-title">EA CREATOR</span>
                 <span className="card-desc">MT4/MT5用EAのコード生成ツール</span>
+              </span>
+              <span className="card-go" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </span>
+            </Link>
+            <Link className="card reveal" href="/omiyagezukan">
+              <span className="card-icon card-icon--omiyage" aria-hidden="true">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#f5f0d8" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M4 10h16v10H4zM3 7h18v3H3zM12 7v13M12 7c-1.5-3-5-3-5-1s3 1 5 1zM12 7c1.5-3 5-3 5-1s-3 1-5 1z" />
+                </svg>
+              </span>
+              <span className="card-body">
+                <span className="card-title">お土産図鑑</span>
+                <span className="card-desc">日本のお土産を集める図鑑アプリ</span>
               </span>
               <span className="card-go" aria-hidden="true">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

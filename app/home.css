@@ -194,6 +194,7 @@
     background: linear-gradient(155deg, var(--green-2), var(--green)); display: grid; place-items: center;
     box-shadow: inset 0 1px 0 rgba(255,255,255,.35);
   }
+  .th .card-icon--yakyu { background: linear-gradient(155deg, #3f7a5e, #1C563D); }
   .th .card-icon--omiyage { background: linear-gradient(155deg, #c9a27c, #9a7350); }
   .th .card-icon--ea { background: linear-gradient(155deg, #d9a77c, #c98b5a); }
   .th .card-body { flex: 1; min-width: 0; }
@@ -289,6 +290,7 @@
     .th .card-icon svg { width: 30px; height: 30px; }
     .th .card-title { font-size: 1.12rem; white-space: nowrap; }
     .th .card-desc { font-size: .9rem; }
+    .th .card-title--long { font-size: min(1.12rem, 3.9vw); }
     .th .card-go { width: 36px; height: 36px; }
     .th .float.f4, .th .float.f5 { display: none; }
     .th .launch { padding: 110px 20px 120px; }

@@ -179,6 +179,9 @@ export default function Home() {
             <Link className="nav-link" href="/omiyagezukan">
               お土産図鑑
             </Link>
+            <Link className="nav-link" href="/apps/pro-yakyu-lineup">
+              プロ野球成績ラインナップ
+            </Link>
           </nav>
         </div>
       </header>
@@ -324,6 +327,23 @@ export default function Home() {
               <span className="card-body">
                 <span className="card-title">お土産図鑑</span>
                 <span className="card-desc">日本のお土産を集める図鑑アプリ</span>
+              </span>
+              <span className="card-go" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </span>
+            </Link>
+            <Link className="card reveal" href="/apps/pro-yakyu-lineup">
+              <span className="card-icon card-icon--yakyu" aria-hidden="true">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#f5f0d8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M6.2 5.2c2.2 1.9 3.3 4.2 3.3 6.8s-1.1 4.9-3.3 6.8M17.8 5.2c-2.2 1.9-3.3 4.2-3.3 6.8s1.1 4.9 3.3 6.8" />
+                </svg>
+              </span>
+              <span className="card-body">
+                <span className="card-title card-title--long">プロ野球成績ラインナップ</span>
+                <span className="card-desc">成績順に5人を並べるクイズアプリ</span>
               </span>
               <span className="card-go" aria-hidden="true">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

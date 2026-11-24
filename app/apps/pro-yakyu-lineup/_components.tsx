@@ -10,13 +10,19 @@ const BG = "#EEF2E9";
 export const linkClass =
   "font-medium text-[#1C563D] underline decoration-[#1C563D]/40 underline-offset-2 hover:decoration-[#1C563D] break-all";
 
-export function Page({ children }: { children: React.ReactNode }) {
+export function Page({
+  children,
+  back = { href: "/apps/pro-yakyu-lineup", label: `${APP_NAME}トップに戻る` },
+}: {
+  children: React.ReactNode;
+  back?: { href: string; label: string };
+}) {
   return (
-    <div style={{ background: BG }}>
+    <div className="min-h-[75vh]" style={{ background: BG }}>
       <main className="mx-auto max-w-2xl px-5 py-12 text-slate-800 sm:px-6 sm:py-16">
         <p className="mb-8">
-          <Link href="/" className="text-sm text-slate-500 hover:underline">
-            ← トップに戻る
+          <Link href={back.href} className="text-sm text-slate-500 hover:underline">
+            ← {back.label}
           </Link>
         </p>
         {children}
